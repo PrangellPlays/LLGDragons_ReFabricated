@@ -1,0 +1,40 @@
+{
+  "__Comment": "Items",
+  "item.llgdragons.dragosphere.empty": "Empty Dragosphere",
+  "item.llgdragons.dragosphere.full": "Shhhhh Sleeping Drago",
+  "item.llgdragons.dragosphere.cannot_capture": "Cannot capture entity, the entity is not a dragon",
+  "item.llgdragons.dragosphere.captured": "Captured Dragon",
+  "item.llgdragons.dragosphere.no_dragon": "No Dragon Captured",
+
+  "item.llgdragons.telling_book": "Book of Telling",
+  "item.llgdragons.scroll": "Scroll",
+  "item.llgdragons.fetch_ball": "Dragon Fetch Ball",
+  "item.llgdragons.gronckle_iron_ingot": "Gronckle Iron Ingot",
+
+  "item.llgdragons.gronckle_iron_pickaxe": "Gronckle Pickaxe",
+  "item.llgdragons.gronckle_iron_axe": "Gronckle Axe",
+  "item.llgdragons.gronckle_iron_shovel": "Gronckle Shovel",
+  "item.llgdragons.gronckle_iron_sword": "Gronckle Sword",
+  "item.llgdragons.gronckle_iron_hoe": "Gronckle Hoe",
+
+  "item.llgdragons.gronckle_iron_helmet": "Gronckle Helmet",
+  "item.llgdragons.gronckle_iron_chestplate": "Gronckle Chestplate",
+  "item.llgdragons.gronckle_iron_leggings": "Gronckle Leggings",
+  "item.llgdragons.gronckle_iron_boots": "Gronckle Boots",
+
+  "__Comment": "Blocks",
+  "block.llgdragons.nightfury_head": "Night Fury Head",
+  "block.llgdragons.albino_nightfury_head": "Albino Night Fury Head",
+  "block.llgdragons.white_nightfury_head": "White Night Fury Head",
+
+  "__Comment": "Item Groups",
+  "itemgroup.llgdragons.items": "LLG Dragons",
+
+  "__Comment": "Keybinding",
+  "category.llgdragons": "How to train your Dragon",
+  "key.llgdragons.descend": "Dragon Descend",
+  "key.llgdragons.dragon_attack_primary": "Dragon Primary Attack",
+  "key.llgdragons.dragon_attack_secondary": "Dragon Secondary Attack",
+  "key.llgdragons.bewilderbeast_talk": "Bewilderbeast Talk",
+  "key.llgdragons.bewilderbeast_roar": "Bewilderbeast Roar"
+}

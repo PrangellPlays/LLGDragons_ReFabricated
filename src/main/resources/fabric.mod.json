@@ -1,0 +1,45 @@
+{
+	"schemaVersion": 1,
+	"id": "llgdragons",
+	"version": "${version}",
+	"name": "LLG Dragons: Refabricated",
+	"description": "How to train your Dragon",
+	"authors": [
+		"PrangellPlays"
+	],
+	"contributors": [
+		"TinyTurtle",
+		"LittleLizard"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": "",
+		"issues": ""
+	},
+	"license": "All Rights Reserved",
+	"icon": "assets/llgdragons/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.prangellplays.llgdragons.LLGDragons"
+		],
+		"client": [
+			"dev.prangellplays.llgdragons.LLGDragonsClient"
+		],
+		"fabric-datagen": [
+			"dev.prangellplays.llgdragons.LLGDragonsDataGenerator"
+		]
+	},
+	"mixins": [
+		"llgdragons.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

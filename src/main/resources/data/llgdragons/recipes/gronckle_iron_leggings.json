@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "llgdragons:gronckle_iron_ingot"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "G G",
+    "G G"
+  ],
+  "result": {
+    "item": "llgdragons:gronckle_iron_leggings"
+  },
+  "show_notification": true
+}

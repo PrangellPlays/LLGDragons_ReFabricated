@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "llgdragons:item/dragosphere_empty"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "llgdragons:dragosphere_full": 1
+      },
+      "model": "llgdragons:item/dragosphere_full"
+    }
+  ]
+}

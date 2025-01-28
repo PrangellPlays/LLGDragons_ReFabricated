@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "llgdragons",
 	"version": "${version}",
-	"name": "LLG Dragons: Refabricated",
+	"name": "LLG Dragons: Re-Fabricated",
 	"description": "How to train your Dragon",
 	"authors": [
 		"PrangellPlays"
@@ -12,9 +12,9 @@
 		"LittleLizard"
 	],
 	"contact": {
-		"homepage": "",
-		"sources": "",
-		"issues": ""
+		"homepage": "https://github.com/PrangellPlays/LLGDragons_ReFabricated/wiki",
+		"sources": "https://github.com/PrangellPlays/LLGDragons_ReFabricated",
+		"issues": "https://github.com/PrangellPlays/LLGDragons_ReFabricated/issues"
 	},
 	"license": "All Rights Reserved",
 	"icon": "assets/llgdragons/icon.png",
@@ -28,6 +28,9 @@
 		],
 		"fabric-datagen": [
 			"dev.prangellplays.llgdragons.LLGDragonsDataGenerator"
+		],
+		"modmenu": [
+			"dev.prangellplays.llgdragons.config.ModMenuCompat"
 		]
 	},
 	"mixins": [
@@ -37,9 +40,11 @@
 		"fabricloader": ">=0.16.10",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"midnightlib": "*",
+		"geckolib": ">=4.4.6"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"modmenu": "*"
 	}
 }

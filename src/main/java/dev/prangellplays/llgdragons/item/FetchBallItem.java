@@ -60,17 +60,9 @@ public class FetchBallItem extends Item {
     }
 
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        NbtCompound nbt = stack.getNbt();
-        MutableText entityAppend = Text.literal("");
-        try {
-            EntityType<?> type = Registries.ENTITY_TYPE.get(new Identifier(nbt.getString("FetchUUID")));
-            entityAppend = type.getName().copy();
-        } catch (Exception ignored) {}
         if (isFetch(stack)) {
             tooltip.add(Text.literal(getFetchName(stack)).formatted(Formatting.RED));
-            tooltip.add(Text.literal(String.valueOf(entityAppend)).formatted(Formatting.RED));
         }
-
     }
 
     public static ItemStack putContract(ItemStack stack, LivingEntity entity) {

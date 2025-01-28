@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "llgdragons:block/dragon_head/httyd_nightfury_head",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "llgdragons:block/dragon_head/httyd_nightfury_head"
+    },
+    "facing=south": {
+      "model": "llgdragons:block/dragon_head/httyd_nightfury_head",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "llgdragons:block/dragon_head/httyd_nightfury_head",
+      "y": 270
+    }
+  }
+}

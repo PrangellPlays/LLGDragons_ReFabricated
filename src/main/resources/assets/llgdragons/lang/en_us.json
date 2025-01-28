@@ -24,6 +24,7 @@
 
   "__Comment": "Blocks",
   "block.llgdragons.nightfury_head": "Night Fury Head",
+  "block.llgdragons.httyd_nightfury_head": "HTTYD Night Fury Head",
   "block.llgdragons.albino_nightfury_head": "Albino Night Fury Head",
   "block.llgdragons.white_nightfury_head": "White Night Fury Head",
 
@@ -36,5 +37,10 @@
   "key.llgdragons.dragon_attack_primary": "Dragon Primary Attack",
   "key.llgdragons.dragon_attack_secondary": "Dragon Secondary Attack",
   "key.llgdragons.bewilderbeast_talk": "Bewilderbeast Talk",
-  "key.llgdragons.bewilderbeast_roar": "Bewilderbeast Roar"
+  "key.llgdragons.bewilderbeast_roar": "Bewilderbeast Roar",
+
+  "__Comment": "Config",
+  "llgdragons.midnightconfig.title": "LLG Dragons: Re-Fabricated",
+  "llgdragons.midnightconfig.category.llgdragons": "LLG Dragons",
+  "llgdragons.midnightconfig.enableMod": "Enable Mod"
 }

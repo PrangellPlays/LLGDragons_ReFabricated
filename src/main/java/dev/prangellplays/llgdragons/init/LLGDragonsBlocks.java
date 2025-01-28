@@ -20,6 +20,7 @@ public class LLGDragonsBlocks {
     protected static final Map<Block, Identifier> BLOCKS = new LinkedHashMap();
     //DRAGON HEAD
     public static final Block NIGHTFURY_HEAD;
+    public static final Block HTTYD_NIGHTFURY_HEAD;
     public static final Block ALBINO_NIGHTFURY_HEAD;
     public static final Block WHITE_NIGHTFURY_HEAD;
 
@@ -55,6 +56,7 @@ public class LLGDragonsBlocks {
     static {
         //Dragon Head
         NIGHTFURY_HEAD = registerWithItem("nightfury_head", new NightfuryHeadBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLACK).strength(0.5F).sounds(BlockSoundGroup.BONE).nonOpaque().luminance(value -> 0).notSolid()));
+        HTTYD_NIGHTFURY_HEAD = registerWithItem("httyd_nightfury_head", new NightfuryHeadBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLACK).strength(0.5F).sounds(BlockSoundGroup.BONE).nonOpaque().luminance(value -> 0).notSolid()));
         ALBINO_NIGHTFURY_HEAD = registerWithItem("albino_nightfury_head", new NightfuryHeadBlock(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).strength(0.5F).sounds(BlockSoundGroup.BONE).nonOpaque().luminance(value -> 0).notSolid()));
         WHITE_NIGHTFURY_HEAD = registerWithItem("white_nightfury_head", new NightfuryHeadBlock(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).strength(0.5F).sounds(BlockSoundGroup.BONE).nonOpaque().luminance(value -> 0).notSolid()));
     }

@@ -1,10 +1,12 @@
 package dev.prangellplays.llgdragons;
 
+import dev.prangellplays.llgdragons.config.LLGDragonsConfig;
 import dev.prangellplays.llgdragons.init.LLGDragonsBlocks;
 import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import dev.prangellplays.llgdragons.init.LLGDragonsItemGroups;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
 import dev.prangellplays.llgdragons.item.DragosphereItem;
+import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.util.Identifier;
@@ -21,6 +23,7 @@ public class LLGDragons implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		MidnightConfig.init(MOD_ID, LLGDragonsConfig.class);
 		LLGDragonsBlocks.init();
 		LLGDragonsItems.init();
 		LLGDragonsItemGroups.init();

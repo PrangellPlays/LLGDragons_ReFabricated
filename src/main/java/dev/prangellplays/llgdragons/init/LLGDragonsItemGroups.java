@@ -31,6 +31,7 @@ public class LLGDragonsItemGroups {
                 entries.add(LLGDragonsItems.GRONCKLE_IRON_BOOTS);
 
                 entries.add(LLGDragonsBlocks.NIGHTFURY_HEAD);
+                entries.add(LLGDragonsBlocks.HTTYD_NIGHTFURY_HEAD);
                 entries.add(LLGDragonsBlocks.ALBINO_NIGHTFURY_HEAD);
                 entries.add(LLGDragonsBlocks.WHITE_NIGHTFURY_HEAD);
             }).build());

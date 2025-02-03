@@ -1,11 +1,10 @@
 package dev.prangellplays.llgdragons;
 
 import dev.prangellplays.llgdragons.config.LLGDragonsConfig;
-import dev.prangellplays.llgdragons.init.LLGDragonsBlocks;
-import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
-import dev.prangellplays.llgdragons.init.LLGDragonsItemGroups;
-import dev.prangellplays.llgdragons.init.LLGDragonsItems;
+import dev.prangellplays.llgdragons.init.*;
 import dev.prangellplays.llgdragons.item.DragosphereItem;
+import dev.prangellplays.llgdragons.network.LLGDragonsServerPacket;
+import dev.prangellplays.llgdragons.util.LLGDragonsRegistries;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 
@@ -28,6 +27,9 @@ public class LLGDragons implements ModInitializer {
 		LLGDragonsItems.init();
 		LLGDragonsItemGroups.init();
 		LLGDragonsEntities.init();
+		LLGDragonsRegistries.init();
+		LLGDragonsServerPacket.init();
+		LLGDragonsSounds.init();
 
 		DragosphereItem.DragosphereEventHandler.init();
 		whitelist();
@@ -40,5 +42,6 @@ public class LLGDragons implements ModInitializer {
 	private void whitelist() {
 		dragosphereWhitelist.add("minecraft:wolf");
 		dragosphereWhitelist.add("minecraft:donkey");
+		dragosphereWhitelist.add("llgdragons:nightfury");
 	}
 }

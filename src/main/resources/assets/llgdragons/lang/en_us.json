@@ -9,6 +9,7 @@
   "item.llgdragons.telling_book": "Book of Telling",
   "item.llgdragons.scroll": "Scroll",
   "item.llgdragons.fetch_ball": "Dragon Fetch Ball",
+  "item.llgdragons.stillness_staff": "Staff of Stillness",
   "item.llgdragons.gronckle_iron_ingot": "Gronckle Iron Ingot",
 
   "item.llgdragons.gronckle_iron_pickaxe": "Gronckle Pickaxe",
@@ -22,6 +23,8 @@
   "item.llgdragons.gronckle_iron_leggings": "Gronckle Leggings",
   "item.llgdragons.gronckle_iron_boots": "Gronckle Boots",
 
+  "item.llgdragons.nightfury_spawn_egg": "Night Fury Spawn Egg",
+
   "__Comment": "Blocks",
   "block.llgdragons.nightfury_head": "Night Fury Head",
   "block.llgdragons.httyd_nightfury_head": "HTTYD Night Fury Head",
@@ -30,6 +33,12 @@
 
   "__Comment": "Item Groups",
   "itemgroup.llgdragons.items": "LLG Dragons",
+
+  "__Comment": "Entity",
+  "entity.llgdragons.nightfury": "Night Fury",
+
+  "__Comment": "Subtitle",
+  "sounds.llgdragons.nightfury_roar": "Night Fury Roars",
 
   "__Comment": "Keybinding",
   "category.llgdragons": "How to train your Dragon",

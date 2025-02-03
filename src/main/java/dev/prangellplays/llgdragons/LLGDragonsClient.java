@@ -2,8 +2,10 @@ package dev.prangellplays.llgdragons;
 
 import dev.prangellplays.llgdragons.client.init.LLGDragonsEntityRenderer;
 import dev.prangellplays.llgdragons.init.LLGDragonsBlocks;
+import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
 import dev.prangellplays.llgdragons.item.DragosphereItem;
+import dev.prangellplays.llgdragons.util.LLGDragonsRegistries;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -23,13 +25,8 @@ public class LLGDragonsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        LLGDragonsEntityRenderer.init();
-
-        //Block Render Layer Map
-        BlockRenderLayerMap.INSTANCE.putBlock(LLGDragonsBlocks.NIGHTFURY_HEAD, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(LLGDragonsBlocks.HTTYD_NIGHTFURY_HEAD, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(LLGDragonsBlocks.ALBINO_NIGHTFURY_HEAD, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(LLGDragonsBlocks.WHITE_NIGHTFURY_HEAD, RenderLayer.getCutout());
+        //Entity Renderer & Block Render Layer Map
+        LLGDragonsRegistries.initClient();
 
         //Model Predicate
         ModelPredicateProviderRegistry.register(LLGDragonsItems.DRAGOSPHERE, LLGDragons.id("dragosphere_full"), (stack, world, entity, i) -> {

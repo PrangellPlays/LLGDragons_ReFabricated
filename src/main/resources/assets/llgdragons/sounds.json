@@ -1,0 +1,8 @@
+{
+  "nightfury_roar": {
+    "subtitle": "sounds.llgdragons.nightfury_roar",
+    "sounds": [
+      "llgdragons:dragon/nightfury/nightfury_roar"
+    ]
+  }
+}

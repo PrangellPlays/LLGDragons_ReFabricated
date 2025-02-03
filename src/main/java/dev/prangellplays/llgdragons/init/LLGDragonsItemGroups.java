@@ -34,6 +34,8 @@ public class LLGDragonsItemGroups {
                 entries.add(LLGDragonsBlocks.HTTYD_NIGHTFURY_HEAD);
                 entries.add(LLGDragonsBlocks.ALBINO_NIGHTFURY_HEAD);
                 entries.add(LLGDragonsBlocks.WHITE_NIGHTFURY_HEAD);
+
+                entries.add(LLGDragonsItems.NIGHTFURY_SPAWN_EGG);
             }).build());
 
     public static void init() {

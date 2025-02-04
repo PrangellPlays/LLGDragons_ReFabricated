@@ -17,7 +17,7 @@
 		},
 		"animation.nightfury.flying": {
 			"loop": true,
-			"animation_length": 1.5,
+			"animation_length": 1.7917,
 			"bones": {
 				"FrontRightLeg": {
 					"rotation": {
@@ -61,85 +61,35 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						},
-						"1.5": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*200)*-30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [-2, 8, 0],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [-2, -11, 0],
-							"easing": "linear"
-						},
-						"1.5": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						}
+						"vector": [-1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"WingsRight": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						},
-						"1.5": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*200)*30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [2, 10, 0],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [2, -13, 0],
-							"easing": "linear"
-						},
-						"1.5": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						}
+						"vector": [1, -2, 0],
+						"easing": "linear"
+					}
+				},
+				"Tail": {
+					"rotation": {
+						"vector": [0, 0, 0],
+						"easing": "linear"
 					}
 				}
 			}
 		},
 		"animation.nightfury.flyingboost": {
 			"loop": true,
-			"animation_length": 0.5,
+			"animation_length": 0.9167,
 			"bones": {
 				"FrontRightLeg": {
 					"rotation": {
@@ -183,69 +133,29 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*400)*-30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [-2, 8, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [-2, -11, 0],
-							"easing": "linear"
-						}
+						"vector": [-1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"WingsRight": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*400)*30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [2, 10, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [2, -13, 0],
-							"easing": "linear"
-						}
+						"vector": [1, -2, 0],
+						"easing": "linear"
 					}
 				}
 			}
 		},
 		"animation.nightfury.flyingup": {
 			"loop": true,
-			"animation_length": 1,
+			"animation_length": 1.7917,
 			"bones": {
 				"FrontRightLeg": {
 					"rotation": {
@@ -289,62 +199,22 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*200)*-30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [-2, 8, 0],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [-2, -11, 0],
-							"easing": "linear"
-						}
+						"vector": [-1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"WingsRight": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*200)*30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [2, 10, 0],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [2, -13, 0],
-							"easing": "linear"
-						}
+						"vector": [1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"NightFury": {
@@ -361,7 +231,7 @@
 		},
 		"animation.nightfury.flyingupboost": {
 			"loop": true,
-			"animation_length": 0.5,
+			"animation_length": 0.9167,
 			"bones": {
 				"FrontRightLeg": {
 					"rotation": {
@@ -405,62 +275,22 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*400)*-30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [-2, 8, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [-2, -11, 0],
-							"easing": "linear"
-						}
+						"vector": [-1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"WingsRight": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*400)*30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [2, 10, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [2, -13, 0],
-							"easing": "linear"
-						}
+						"vector": [1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"NightFury": {
@@ -477,7 +307,7 @@
 		},
 		"animation.nightfury.flyingdown": {
 			"loop": true,
-			"animation_length": 1,
+			"animation_length": 1.7917,
 			"bones": {
 				"FrontRightLeg": {
 					"rotation": {
@@ -521,62 +351,22 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*200)*-30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [-2, 8, 0],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [-2, -11, 0],
-							"easing": "linear"
-						}
+						"vector": [-1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"WingsRight": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*200)*30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [2, 10, 0],
-							"easing": "linear"
-						},
-						"1.0": {
-							"vector": [2, -13, 0],
-							"easing": "linear"
-						}
+						"vector": [1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"NightFury": {
@@ -593,7 +383,7 @@
 		},
 		"animation.nightfury.flyingdownboost": {
 			"loop": true,
-			"animation_length": 0.5,
+			"animation_length": 0.9167,
 			"bones": {
 				"FrontRightLeg": {
 					"rotation": {
@@ -637,62 +427,22 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*400)*-30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [-2, 8, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [-2, -11, 0],
-							"easing": "linear"
-						}
+						"vector": [-1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"WingsRight": {
 					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [0, 0, 15],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [0, 0, -15],
-							"easing": "linear"
-						}
+						"vector": [0, 0, "math.sin(query.anim_time*400)*30"],
+						"easing": "linear"
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, -2, 0],
-							"easing": "linear"
-						},
-						"0.25": {
-							"vector": [2, 10, 0],
-							"easing": "linear"
-						},
-						"0.5": {
-							"vector": [2, -13, 0],
-							"easing": "linear"
-						}
+						"vector": [1, -2, 0],
+						"easing": "linear"
 					}
 				},
 				"NightFury": {

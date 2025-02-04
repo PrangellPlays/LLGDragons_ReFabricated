@@ -262,7 +262,7 @@
 				{
 					"name": "WingsLeft",
 					"parent": "WingsOut",
-					"pivot": [43.9, 15.85, -10],
+					"pivot": [6.9, 15, -2],
 					"cubes": [
 						{"origin": [7, 15, -7], "size": [22, 2, 2], "uv": [116, 85]},
 						{"origin": [27.73, 15, -12.59], "size": [22, 2, 2], "pivot": [49.6, 15, -12.6], "rotation": [0, 15, 0], "uv": [118, 0]},
@@ -382,7 +382,7 @@
 				{
 					"name": "WingsRight",
 					"parent": "WingsOut",
-					"pivot": [-50.2, 15, -11.35],
+					"pivot": [-7.2, 15, -0.35],
 					"cubes": [
 						{"origin": [-50.47, 15, -6.97], "size": [22, 2, 2], "pivot": [-28.6, 15, -7], "rotation": [0, -15, 0], "uv": [118, 4]},
 						{

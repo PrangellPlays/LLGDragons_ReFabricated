@@ -104,6 +104,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         nbt.putBoolean("flying", this.flying);
         nbt.putBoolean("saddled", this.dataTracker.get(HAS_SADDLE));
         nbt.putBoolean("still", this.dataTracker.get(STILL));
+        //nbt.putBoolean("still_facing", this.dataTracker.get(STILL_FACING));
     }
 
     @Override

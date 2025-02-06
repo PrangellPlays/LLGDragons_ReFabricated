@@ -25,6 +25,8 @@
 
   "item.llgdragons.nightfury_spawn_egg": "Night Fury Spawn Egg",
 
+  "item.llgdragons.plasma_projectile": "Plasma Projectile",
+
   "__Comment": "Blocks",
   "block.llgdragons.nightfury_head": "Night Fury Head",
   "block.llgdragons.httyd_nightfury_head": "HTTYD Night Fury Head",
@@ -39,6 +41,9 @@
 
   "__Comment": "Subtitle",
   "sounds.llgdragons.nightfury_roar": "Night Fury Roars",
+
+  "__Comment": "Particles",
+  "particle.llgdragons.plasma_wave": "Plasma Wave",
 
   "__Comment": "Keybinding",
   "category.llgdragons": "How to train your Dragon",

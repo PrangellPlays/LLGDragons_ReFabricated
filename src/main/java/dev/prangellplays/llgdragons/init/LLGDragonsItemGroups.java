@@ -36,6 +36,9 @@ public class LLGDragonsItemGroups {
                 entries.add(LLGDragonsBlocks.WHITE_NIGHTFURY_HEAD);
 
                 entries.add(LLGDragonsItems.NIGHTFURY_SPAWN_EGG);
+
+                //DEV
+                entries.add(LLGDragonsItems.PLASMA_PROJECTILE);
             }).build());
 
     public static void init() {

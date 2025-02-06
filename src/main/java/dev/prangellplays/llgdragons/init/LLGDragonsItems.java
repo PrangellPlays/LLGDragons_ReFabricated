@@ -32,6 +32,9 @@ public class LLGDragonsItems {
 
     public static final Item NIGHTFURY_SPAWN_EGG;
 
+    //DEV
+    public static final Item PLASMA_PROJECTILE;
+
     public static void init() {
         ITEMS.forEach((item, id) -> {
             Registry.register(Registries.ITEM, id, item);
@@ -66,5 +69,8 @@ public class LLGDragonsItems {
         GRONCKLE_IRON_BOOTS = register((String) "gronckle_iron_boots", (Item) new ArmorItem(LLGDragonsArmourMaterials.GRONCKLE_IRON, ArmorItem.Type.BOOTS, new FabricItemSettings().fireproof()));
 
         NIGHTFURY_SPAWN_EGG = register((String) "nightfury_spawn_egg", (Item) new SpawnEggItem(LLGDragonsEntities.NIGHTFURY, 1315860, 16701501, new FabricItemSettings()));
+
+        //DEV
+        PLASMA_PROJECTILE = register((String) "plasma_projectile", (Item) new PlasmaProjectileItem(new FabricItemSettings().maxCount(1).fireproof()));
     }
 }

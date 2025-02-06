@@ -25,15 +25,4 @@ public class NightfuryModel extends GeoModel<NightfuryEntity> {
     public Identifier getAnimationResource(NightfuryEntity animatable) {
         return new Identifier(LLGDragons.MOD_ID, "animations/entity/nightfury/nightfury.animation.json");
     }
-
-    @Override
-    public void setCustomAnimations(NightfuryEntity animatable, long instanceId, AnimationState<NightfuryEntity> animationState) {
-        CoreGeoBone head = getAnimationProcessor().getBone("head");
-
-        if (head != null) {
-            EntityModelData entityModelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
-            head.setRotX(entityModelData.headPitch() * MathHelper.RADIANS_PER_DEGREE);
-            head.setRotY(entityModelData.netHeadYaw() * MathHelper.RADIANS_PER_DEGREE);
-        }
-    }
 }

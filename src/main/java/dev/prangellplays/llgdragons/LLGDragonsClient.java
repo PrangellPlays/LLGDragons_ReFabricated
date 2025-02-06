@@ -25,7 +25,7 @@ public class LLGDragonsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        //Entity Renderer & Block Render Layer Map
+        //Entity Renderer & Block Render Layer Map & Particles
         LLGDragonsRegistries.initClient();
 
         //Model Predicate

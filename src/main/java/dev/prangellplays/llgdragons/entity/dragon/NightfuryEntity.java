@@ -1,8 +1,9 @@
 package dev.prangellplays.llgdragons.entity.dragon;
 
 import dev.prangellplays.llgdragons.LLGDragonsClient;
-import dev.prangellplays.llgdragons.client.entity.nightfury.NightfuryModel;
 import dev.prangellplays.llgdragons.entity.DragonEntity;
+import dev.prangellplays.llgdragons.entity.FetchBallEntity;
+import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
 import dev.prangellplays.llgdragons.entity.goal.DragonSitGoal;
 import dev.prangellplays.llgdragons.entity.goal.DragonStillGoal;
 import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
@@ -29,7 +30,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.server.ServerConfigHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -47,10 +47,6 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.PlayState;
-
-import java.util.Optional;
-import java.util.UUID;
-
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_FLYING_SPEED;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_MOVEMENT_SPEED;
 
@@ -92,7 +88,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     public static DefaultAttributeContainer.Builder createNightfuryAttributes() {
         return MobEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D)
-                .add(GENERIC_MOVEMENT_SPEED, 0.5f)
+                .add(GENERIC_MOVEMENT_SPEED, 0.3f)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 4.0f)
                 .add(GENERIC_FLYING_SPEED, 1f);
                 //.add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 4);
@@ -372,6 +368,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                     nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flying", Animation.LoopType.LOOP));
                 }
             }
+        } else if (nightfuryEntityAnimationState.isMoving()) {
+            nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.walk", Animation.LoopType.LOOP));
         } else {
             nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.idle", Animation.LoopType.LOOP));
         }
@@ -433,6 +431,16 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                 this.setGoingDown(true);
             } else if (!LLGDragonsClient.descend.isPressed()) {
                 this.setGoingDown(false);
+            }
+        }
+
+        if (this.getWorld().isClient) {
+            if (LLGDragonsClient.dragonAttackPrimary.isPressed()) {
+                if (!this.getWorld().isClient()) {
+                    PlasmaBlastEntity plasmaBlastEntity = new PlasmaBlastEntity(LLGDragonsEntities.PLASMA_BLAST, this.getWorld());
+                    plasmaBlastEntity.setVelocity(this, this.getPitch(), this.getYaw(), 0.0F, 1.5F, 1.0F);
+                    this.getWorld().spawnEntity(plasmaBlastEntity);
+                }
             }
         }
     }

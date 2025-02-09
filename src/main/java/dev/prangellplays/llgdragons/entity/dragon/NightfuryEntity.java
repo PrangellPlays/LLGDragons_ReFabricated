@@ -2,10 +2,7 @@ package dev.prangellplays.llgdragons.entity.dragon;
 
 import dev.prangellplays.llgdragons.LLGDragonsClient;
 import dev.prangellplays.llgdragons.entity.DragonEntity;
-import dev.prangellplays.llgdragons.entity.FetchBallEntity;
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
-import dev.prangellplays.llgdragons.entity.goal.DragonSitGoal;
-import dev.prangellplays.llgdragons.entity.goal.DragonStillGoal;
 import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
 import dev.prangellplays.llgdragons.init.LLGDragonsSounds;
@@ -19,8 +16,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -30,7 +26,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.ServerConfigHandler;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -47,12 +43,20 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.PlayState;
+
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.UUID;
+
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_FLYING_SPEED;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_MOVEMENT_SPEED;
 
 public class NightfuryEntity extends DragonEntity implements GeoEntity {
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     private static final Ingredient TAMING_INGREDIENT;
+
+    private static final TrackedData<Byte> TAMEABLE_FLAGS = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BYTE);
+    private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 
     private static final TrackedData<Boolean> GENDER = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Boolean> SLEEPING = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -68,6 +72,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
 
     private static final TrackedData<Boolean> STILL = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
+    private boolean sitting;
     private int startFlyingTimer = 0;
     private float dragonSideSpeed = 0.0F;
     private float dragonForwardSpeed = 0.0F;
@@ -79,9 +84,10 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     public static final int GROUND_CLEARENCE_THRESHOLD = 3;
     private boolean nearGround;
     public int flapSoundChance;
+    public int diveSoundChance;
     public boolean still;
 
-    public NightfuryEntity(EntityType<? extends TameableEntity> entityType, World world) {
+    public NightfuryEntity(EntityType<? extends PathAwareEntity> entityType, World world) {
         super(entityType, world);
     }
 
@@ -97,17 +103,38 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
+        if (this.getOwnerUuid() != null) {
+            nbt.putUuid("owner", this.getOwnerUuid());
+        }
         nbt.putBoolean("flying", this.flying);
         nbt.putBoolean("saddled", this.dataTracker.get(HAS_SADDLE));
         nbt.putBoolean("still", this.dataTracker.get(STILL));
+        nbt.putBoolean("sitting", this.sitting);
         //nbt.putBoolean("still_facing", this.dataTracker.get(STILL_FACING));
     }
 
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
+        UUID uUID2;
+        if (nbt.containsUuid("owner")) {
+            uUID2 = nbt.getUuid("owner");
+        } else {
+            String string = nbt.getString("owner");
+            uUID2 = ServerConfigHandler.getPlayerUuidByName(this.getServer(), string);
+        }
+        if (uUID2 != null) {
+            try {
+                this.setOwnerUuid(uUID2);
+                this.setTamed(true);
+            } catch (Throwable var4) {
+                this.setTamed(false);
+            }
+        }
         this.flying = nbt.getBoolean("flying");
         this.dataTracker.set(FLYING, this.flying);
+        this.sitting = nbt.getBoolean("sitting");
+        this.setSitting(this.sitting);
         this.saddled = nbt.getBoolean("saddled");
         this.dataTracker.set(HAS_SADDLE, this.saddled);
         this.still = nbt.getBoolean("still");
@@ -117,6 +144,9 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     @Override
     protected void initDataTracker() {
         super.initDataTracker();
+        this.dataTracker.startTracking(TAMEABLE_FLAGS, (byte) 0);
+        this.dataTracker.startTracking(OWNER_UUID, Optional.empty());
+
         this.dataTracker.startTracking(GENDER, false);
         this.dataTracker.startTracking(SLEEPING, false);
         this.dataTracker.startTracking(HAS_SADDLE, false);
@@ -135,8 +165,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     @Override
     protected void initGoals() {
         this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new DragonStillGoal(this));
-        this.goalSelector.add(2, new DragonSitGoal(this));
+        this.goalSelector.add(1, new NightFuryStillGoal(this));
+        this.goalSelector.add(2, new NightFurySitGoal(this));
         this.goalSelector.add(3, new TemptGoal(this, 0.75f, TAMING_INGREDIENT, false));
         this.goalSelector.add(4, new WanderAroundFarGoal(this, 0.75f, 0.2f));
         this.goalSelector.add(5, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
@@ -188,10 +218,15 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         this.dataTracker.set(GOING_DOWN, goingDown);
     }
 
-    @Nullable
+    /*@Nullable
     @Override
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
         return LLGDragonsEntities.NIGHTFURY.create(world);
+    }*/
+
+    @Override
+    public boolean canBeLeashedBy(PlayerEntity player) {
+        return false;
     }
 
     @Override
@@ -214,7 +249,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                 this.playSound(SoundEvents.ENTITY_GENERIC_EAT, 0.5F + 0.5F * (float)this.random.nextInt(2), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
 
                 if (this.random.nextInt(3) == 0) {
-                    super.setOwner(player);
+                    this.setOwner(player);
                     this.navigation.recalculatePath();
                     this.setTarget(null);
                     this.getWorld().sendEntityStatus(this, (byte) 7);
@@ -249,8 +284,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         }
 
         if(isTamed() && hand == Hand.MAIN_HAND && !isTamingItem(itemstack) && item != LLGDragonsItems.FETCH_BALL && item != itemForSitting && item != LLGDragonsItems.DRAGOSPHERE && item != LLGDragonsItems.STILLNESS_STAFF && item != LLGDragonsItems.TELLING_BOOK && this.dataTracker.get(HAS_SADDLE)) {
-            if (isSitting()) {
-                boolean sitting = !isSitting();
+            if (isInSittingPose()) {
+                boolean sitting = !isInSittingPose();
                 setSitting(sitting);
                 setInSittingPose(sitting);
                 setRiding(player);
@@ -265,7 +300,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         }
 
         if(isTamed() && hand == Hand.MAIN_HAND && item == itemForSitting) {
-            boolean sitting = !isSitting();
+            boolean sitting = !isInSittingPose();
             setSitting(sitting);
             setInSittingPose(sitting);
             player.sendMessage(Text.of("Sitting: " + sitting), true);
@@ -307,6 +342,69 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
             this.getWorld().addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, stack), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
         }
 
+    }
+
+    public boolean isTamed() {
+        return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 4) != 0;
+    }
+
+    public void setTamed(boolean tamed) {
+        byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
+        if (tamed) {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 4));
+        } else {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & -5));
+        }
+    }
+
+    @Nullable
+    @Override
+    public UUID getOwnerUuid() {
+        return (UUID) ((Optional<UUID>) this.dataTracker.get(OWNER_UUID)).orElse((UUID) (Object) null);
+    }
+
+    public void setOwnerUuid(@Nullable UUID uuid) {
+        this.dataTracker.set(OWNER_UUID, Optional.ofNullable(uuid));
+    }
+
+    public void setOwner(PlayerEntity player) {
+        this.setTamed(true);
+        this.setOwnerUuid(player.getUuid());
+    }
+
+    @Nullable
+    @Override
+    public LivingEntity getOwner() {
+        try {
+            UUID uUID = this.getOwnerUuid();
+            return uUID == null ? null : this.getWorld().getPlayerByUuid(uUID);
+        } catch (IllegalArgumentException var2) {
+            return null;
+        }
+    }
+
+    public boolean isOwner(LivingEntity entity) {
+        return entity == this.getOwner();
+    }
+
+    public boolean isInSittingPose() {
+        return ((Byte) this.dataTracker.get(TAMEABLE_FLAGS) & 1) != 0;
+    }
+
+    private void setInSittingPose(boolean inSittingPose) {
+        this.sitting = inSittingPose;
+        byte b = (Byte) this.dataTracker.get(TAMEABLE_FLAGS);
+        if (inSittingPose) {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b | 1));
+        } else {
+            this.dataTracker.set(TAMEABLE_FLAGS, (byte) (b & 0xFFFFFFFE));
+        }
+
+    }
+
+    public void setSitting(boolean sitting) {
+        this.sitting = sitting;
+        setInSittingPose(sitting);
     }
 
     @Override
@@ -370,6 +468,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
             }
         } else if (nightfuryEntityAnimationState.isMoving()) {
             nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.walk", Animation.LoopType.LOOP));
+        } else if (this.isInSittingPose()) {
+            nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sit", Animation.LoopType.LOOP));
         } else {
             nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.idle", Animation.LoopType.LOOP));
         }
@@ -415,8 +515,25 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
 
         if (this.getWorld().isClient && !this.isSilent() && this.flying) {
             if (this.isAlive() && this.random.nextInt(10) < this.flapSoundChance++) {
-                this.resetFlapSoundDelay();
-                this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 1.0F, 0.2F + this.random.nextFloat() * 0.3F, false);
+                if (this.isGoingDown() && this.boosting()) {
+
+                } else if (this.isGoingDown() && !this.boosting()) {
+                    this.resetFlapSoundDelay();
+                    this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 1.0F, 0.2F + this.random.nextFloat() * 0.3F, false);
+                } else {
+                    this.resetFlapSoundDelay();
+                    this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 1.0F, 0.2F + this.random.nextFloat() * 0.3F, false);
+                }
+            }
+            if (this.isAlive() && this.random.nextInt(10) < this.diveSoundChance++) {
+                if (this.isGoingDown() && this.boosting()) {
+                    this.resetDiveSoundDelay();
+                    this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ITEM_ELYTRA_FLYING, this.getSoundCategory(), 0.6F, 0.2F + this.random.nextFloat() * 0.3F, false);
+                }
+            }
+
+            if (!isFlying() || this.isNearGround() || !this.isGoingDown() && this.random.nextInt(10) > this.diveSoundChance++) {
+                MinecraftClient.getInstance().getSoundManager().stopSounds(SoundEvents.ITEM_ELYTRA_FLYING.getId(), this.getSoundCategory());
             }
         }
 
@@ -450,6 +567,14 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
             return 10;
         }
         return 30;
+    }
+
+    public int getMinDiveSoundDelay() {
+        return 210;
+    }
+
+    private void resetDiveSoundDelay() {
+        this.diveSoundChance = -this.getMinDiveSoundDelay();
     }
 
     private void resetFlapSoundDelay() {
@@ -503,7 +628,11 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
             if (MinecraftClient.getInstance().options.jumpKey.isPressed()) {
                 moveY = 1;
             } else if (LLGDragonsClient.descend.isPressed()) {
-                moveY = -1;
+                if (this.boosting()) {
+                    moveY = -2;
+                } else {
+                    moveY = -1;
+                }
             }
         }
 
@@ -620,5 +749,99 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
             return 0;
         }
         return 75;
+    }
+
+    @Override
+    public boolean cannotDespawn() {
+        return this.isTamed();
+    }
+
+    public static class NightFurySitGoal extends Goal {
+        private final NightfuryEntity dragonEntity;
+
+        public NightFurySitGoal(NightfuryEntity dragonEntity) {
+            this.dragonEntity = dragonEntity;
+            this.setControls(EnumSet.of(Goal.Control.JUMP, Goal.Control.MOVE));
+        }
+
+        @Override
+        public boolean shouldContinue() {
+            return this.dragonEntity.isInSittingPose();
+        }
+
+        @Override
+        public boolean canStart() {
+            if (!this.dragonEntity.isTamed()) {
+                return false;
+            } else if (this.dragonEntity.isInsideWaterOrBubbleColumn()) {
+                return false;
+            } else if (!this.dragonEntity.isOnGround()) {
+                return false;
+            } else {
+                if (this.dragonEntity.getOwner() == null) {
+                    // Has to be true cause if Owner is not there
+                    // Only if owner is there, dragon can get set to walk
+                    return true;
+                } else {
+                    return this.dragonEntity.isInSittingPose();
+                }
+            }
+        }
+
+        @Override
+        public void start() {
+            this.dragonEntity.getNavigation().stop();
+            this.dragonEntity.setSitting(true);
+        }
+
+        @Override
+        public void stop() {
+            this.dragonEntity.setSitting(false);
+        }
+    }
+
+    public static class NightFuryStillGoal extends Goal {
+        private final NightfuryEntity dragonEntity;
+
+        public NightFuryStillGoal(NightfuryEntity dragonEntity) {
+            this.dragonEntity = dragonEntity;
+            this.setControls(EnumSet.of(Control.JUMP, Control.MOVE));
+        }
+
+        @Override
+        public boolean shouldContinue() {
+            return this.dragonEntity.isStill();
+        }
+
+        @Override
+        public boolean canStart() {
+            if (!this.dragonEntity.isTamed()) {
+                return false;
+            } else if (this.dragonEntity.isInsideWaterOrBubbleColumn()) {
+                return false;
+            } else if (!this.dragonEntity.isOnGround()) {
+                return false;
+            } else {
+                if (this.dragonEntity.getOwner() == null) {
+                    // Has to be true cause if Owner is not there
+                    // Only if owner is there, dragon can get set to walk
+                    return true;
+                } else {
+                    return this.dragonEntity.isStill();
+                }
+            }
+        }
+
+        @Override
+        public void start() {
+            this.dragonEntity.getNavigation().stop();
+            this.dragonEntity.lookAtEntity(dragonEntity, 0, 0);
+            this.dragonEntity.setStill(true);
+        }
+
+        @Override
+        public void stop() {
+            this.dragonEntity.setStill(false);
+        }
     }
 }

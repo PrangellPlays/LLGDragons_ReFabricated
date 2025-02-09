@@ -379,7 +379,7 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"vector": [0, 0, "math.sin(query.anim_time*200)*-30"],
+						"vector": [0, 0, "math.sin(query.anim_time*200)*-20"],
 						"easing": "linear"
 					},
 					"position": {
@@ -389,11 +389,17 @@
 				},
 				"WingsRight": {
 					"rotation": {
-						"vector": [0, 0, "math.sin(query.anim_time*200)*30"],
+						"vector": [0, 0, "math.sin(query.anim_time*200)*20"],
 						"easing": "linear"
 					},
 					"position": {
 						"vector": [1, 0, 0],
+						"easing": "linear"
+					}
+				},
+				"Tail": {
+					"rotation": {
+						"vector": ["math.sin(query.anim_time*200)*-1.8", 0, 0],
 						"easing": "linear"
 					}
 				},
@@ -403,7 +409,33 @@
 						"easing": "linear"
 					},
 					"position": {
-						"vector": [0, 0, -1],
+						"vector": [0, "-1+math.sin(query.anim_time*200)*-0.4", 0],
+						"easing": "linear"
+					}
+				},
+				"Head": {
+					"rotation": {
+						"vector": ["math.sin(query.anim_time*200)*-0.8", 0, 0],
+						"easing": "linear"
+					}
+				},
+				"WingEndRight": {
+					"rotation": {
+						"vector": [0, 0, "math.sin(query.anim_time*200)*20"],
+						"easing": "linear"
+					},
+					"position": {
+						"vector": ["math.sin(query.anim_time*200)*0.2", 0, 0],
+						"easing": "linear"
+					}
+				},
+				"WingEndLeft": {
+					"rotation": {
+						"vector": [0, 0, "math.sin(query.anim_time*200)*-20"],
+						"easing": "linear"
+					},
+					"position": {
+						"vector": ["math.sin(query.anim_time*200)*-0.2", 0, 0],
 						"easing": "linear"
 					}
 				},
@@ -417,7 +449,7 @@
 		},
 		"animation.nightfury.flyingupboost": {
 			"loop": true,
-			"animation_length": 0.9167,
+			"animation_length": 1.7917,
 			"bones": {
 				"FrontRightLeg": {
 					"rotation": {
@@ -461,7 +493,7 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"vector": [0, 0, "math.sin(query.anim_time*400)*-30"],
+						"vector": [0, 0, "math.sin(query.anim_time*400)*-20"],
 						"easing": "linear"
 					},
 					"position": {
@@ -471,11 +503,17 @@
 				},
 				"WingsRight": {
 					"rotation": {
-						"vector": [0, 0, "math.sin(query.anim_time*400)*30"],
+						"vector": [0, 0, "math.sin(query.anim_time*400)*20"],
 						"easing": "linear"
 					},
 					"position": {
 						"vector": [1, 0, 0],
+						"easing": "linear"
+					}
+				},
+				"Tail": {
+					"rotation": {
+						"vector": ["math.sin(query.anim_time*400)*-1.8", 0, 0],
 						"easing": "linear"
 					}
 				},
@@ -485,7 +523,33 @@
 						"easing": "linear"
 					},
 					"position": {
-						"vector": [0, 0, -1],
+						"vector": [0, "-1+math.sin(query.anim_time*400)*-0.4", 0],
+						"easing": "linear"
+					}
+				},
+				"Head": {
+					"rotation": {
+						"vector": ["math.sin(query.anim_time*400)*-0.8", 0, 0],
+						"easing": "linear"
+					}
+				},
+				"WingEndRight": {
+					"rotation": {
+						"vector": [0, 0, "math.sin(query.anim_time*400)*20"],
+						"easing": "linear"
+					},
+					"position": {
+						"vector": ["math.sin(query.anim_time*400)*0.2", 0, 0],
+						"easing": "linear"
+					}
+				},
+				"WingEndLeft": {
+					"rotation": {
+						"vector": [0, 0, "math.sin(query.anim_time*400)*-20"],
+						"easing": "linear"
+					},
+					"position": {
+						"vector": ["math.sin(query.anim_time*400)*-0.2", 0, 0],
 						"easing": "linear"
 					}
 				},
@@ -543,7 +607,7 @@
 				},
 				"WingsLeft": {
 					"rotation": {
-						"vector": [0, 0, "math.sin(query.anim_time*200)*-30"],
+						"vector": [0, 0, "math.sin(query.anim_time*200)*-20"],
 						"easing": "linear"
 					},
 					"position": {
@@ -553,11 +617,17 @@
 				},
 				"WingsRight": {
 					"rotation": {
-						"vector": [0, 0, "math.sin(query.anim_time*200)*30"],
+						"vector": [0, 0, "math.sin(query.anim_time*200)*20"],
 						"easing": "linear"
 					},
 					"position": {
 						"vector": [1, 0, 0],
+						"easing": "linear"
+					}
+				},
+				"Tail": {
+					"rotation": {
+						"vector": ["math.sin(query.anim_time*200)*-1.8", 0, 0],
 						"easing": "linear"
 					}
 				},
@@ -567,7 +637,33 @@
 						"easing": "linear"
 					},
 					"position": {
-						"vector": [0, 0, -1],
+						"vector": [0, "-1+math.sin(query.anim_time*200)*-0.4", 0],
+						"easing": "linear"
+					}
+				},
+				"Head": {
+					"rotation": {
+						"vector": ["math.sin(query.anim_time*200)*-0.8", 0, 0],
+						"easing": "linear"
+					}
+				},
+				"WingEndRight": {
+					"rotation": {
+						"vector": [0, 0, "math.sin(query.anim_time*200)*20"],
+						"easing": "linear"
+					},
+					"position": {
+						"vector": ["math.sin(query.anim_time*200)*0.2", 0, 0],
+						"easing": "linear"
+					}
+				},
+				"WingEndLeft": {
+					"rotation": {
+						"vector": [0, 0, "math.sin(query.anim_time*200)*-20"],
+						"easing": "linear"
+					},
+					"position": {
+						"vector": ["math.sin(query.anim_time*200)*-0.2", 0, 0],
 						"easing": "linear"
 					}
 				},
@@ -1121,6 +1217,18 @@
 				"WingsInLeft": {
 					"position": {
 						"vector": [0, 5, 0],
+						"easing": "linear"
+					}
+				},
+				"NightFury": {
+					"position": {
+						"vector": [0, 0, -11],
+						"easing": "linear"
+					}
+				},
+				"WingsOut": {
+					"scale": {
+						"vector": [0, 0, 0],
 						"easing": "linear"
 					}
 				}

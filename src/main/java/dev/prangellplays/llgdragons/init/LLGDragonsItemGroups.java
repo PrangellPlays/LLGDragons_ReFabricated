@@ -17,6 +17,7 @@ public class LLGDragonsItemGroups {
                 entries.add(LLGDragonsItems.TELLING_BOOK);
                 entries.add(LLGDragonsItems.SCROLL);
                 entries.add(LLGDragonsItems.FETCH_BALL);
+                entries.add(LLGDragonsItems.STILLNESS_STAFF);
                 entries.add(LLGDragonsItems.GRONCKLE_IRON_INGOT);
 
                 entries.add(LLGDragonsItems.GRONCKLE_IRON_PICKAXE);

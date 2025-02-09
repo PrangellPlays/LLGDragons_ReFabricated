@@ -1,12 +1,12 @@
 package dev.prangellplays.llgdragons.item;
 
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
-import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class PlasmaProjectileItem extends Item {
@@ -16,8 +16,9 @@ public class PlasmaProjectileItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        PlasmaBlastEntity plasmaBlastEntity = new PlasmaBlastEntity(LLGDragonsEntities.PLASMA_BLAST, world);
-        plasmaBlastEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 1.0F);
+        PlasmaBlastEntity plasmaBlastEntity = new PlasmaBlastEntity(world, user, user.getX(), user.getY(), user.getZ());
+        //plasmaBlastEntity.refreshPositionAndAngles(user.getX(), user.getY() + user.getBoundingBox().getYLength() * 0.65D + (user.getPitch() > 0F ? -user.getPitch() / 40F : -user.getPitch() / 80F), user.getZ() * 3D, user.getYaw(), user.getPitch());
+        plasmaBlastEntity.setVelocity(user.getX(), user.getEyeY(), user.getZ(), 2, 1);
         world.spawnEntity(plasmaBlastEntity);
         return super.use(world, user, hand);
     }

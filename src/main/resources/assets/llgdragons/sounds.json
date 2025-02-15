@@ -1,4 +1,10 @@
 {
+  "dragon_egg_hatch": {
+    "subtitle": "sounds.llgdragons.dragon_egg_hatch",
+    "sounds": [
+      "llgdragons:dragon/dragon_egg_hatch"
+    ]
+  },
   "nightfury_roar": {
     "subtitle": "sounds.llgdragons.nightfury_roar",
     "sounds": [

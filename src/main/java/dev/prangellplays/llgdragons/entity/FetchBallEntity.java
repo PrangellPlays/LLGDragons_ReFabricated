@@ -9,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
@@ -41,11 +42,6 @@ public class FetchBallEntity extends ThrownItemEntity {
             this.discard();
         }
 
-        ItemEntity itemEntity = (ItemEntity)EntityType.ITEM.create(this.getWorld());
-        if (itemEntity != null) {
-            itemEntity.setStack(LLGDragonsItems.FETCH_BALL.getDefaultStack());
-            itemEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), this.getYaw(), 0.0F);
-            this.getWorld().spawnEntity(itemEntity);
-        }
+        ItemScatterer.spawn(this.getWorld(), this.getX(), this.getY(), this.getZ(), this.getDefaultItem().getDefaultStack());
     }
 }

@@ -24,6 +24,7 @@
   "item.llgdragons.gronckle_iron_boots": "Gronckle Boots",
 
   "item.llgdragons.nightfury_spawn_egg": "Night Fury Spawn Egg",
+  "item.llgdragons.nightfury_egg": "Night Fury Egg",
 
   "item.llgdragons.plasma_projectile": "Plasma Projectile",
 
@@ -38,9 +39,11 @@
 
   "__Comment": "Entity",
   "entity.llgdragons.nightfury": "Night Fury",
+  "entity.llgdragons.nightfury_egg": "Night Fury Egg",
   "entity.llgdragons.plasma_blast": "Plasma Blast",
 
   "__Comment": "Subtitle",
+  "sounds.llgdragons.dragon_egg_hatch": "Dragon Egg Hatch",
   "sounds.llgdragons.nightfury_roar": "Night Fury Roars",
 
   "__Comment": "Particles",

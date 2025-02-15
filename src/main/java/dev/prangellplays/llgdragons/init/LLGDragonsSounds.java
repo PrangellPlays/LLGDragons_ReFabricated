@@ -10,6 +10,7 @@ import java.util.Map;
 
 public interface LLGDragonsSounds {
     Map<SoundEvent, Identifier> SOUND_EVENTS = new LinkedHashMap();
+    SoundEvent DRAGON_EGG_HATCH = createSoundEvent("dragon_egg_hatch");
     SoundEvent NIGHTFURY_ROAR = createSoundEvent("nightfury_roar");
 
     static void init() {

@@ -1,9 +1,9 @@
 package dev.prangellplays.llgdragons.util;
 
-import dev.prangellplays.llgdragons.client.entity.nightfury.NightfuryEggRenderer;
-import dev.prangellplays.llgdragons.client.entity.nightfury.NightfuryRenderer;
-import dev.prangellplays.llgdragons.client.entity.nightfury.PlasmaBlastRenderer;
+import dev.prangellplays.llgdragons.client.entity.nightfury.*;
 import dev.prangellplays.llgdragons.client.init.LLGDragonsEntityRenderer;
+import dev.prangellplays.llgdragons.entity.dragon.AztecNightfuryEggEntity;
+import dev.prangellplays.llgdragons.entity.dragon.AztecNightfuryEntity;
 import dev.prangellplays.llgdragons.entity.dragon.NightfuryEggEntity;
 import dev.prangellplays.llgdragons.entity.dragon.NightfuryEntity;
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
@@ -31,6 +31,8 @@ public class LLGDragonsRegistries {
     private static void registerEntityAttributes() {
         FabricDefaultAttributeRegistry.register(LLGDragonsEntities.NIGHTFURY, NightfuryEntity.createNightfuryAttributes());
         FabricDefaultAttributeRegistry.register(LLGDragonsEntities.NIGHTFURY_EGG, NightfuryEggEntity.createNightfuryEggAttributes());
+        FabricDefaultAttributeRegistry.register(LLGDragonsEntities.AZTEC_NIGHTFURY, AztecNightfuryEntity.createAztecNightfuryAttributes());
+        FabricDefaultAttributeRegistry.register(LLGDragonsEntities.AZTEC_NIGHTFURY_EGG, AztecNightfuryEggEntity.createAztecNightfuryEggAttributes());
     }
 
     private static void registerBlockRenderLayerMap() {
@@ -44,6 +46,8 @@ public class LLGDragonsRegistries {
         LLGDragonsEntityRenderer.init();
         EntityRendererRegistry.register(LLGDragonsEntities.NIGHTFURY, NightfuryRenderer::new);
         EntityRendererRegistry.register(LLGDragonsEntities.NIGHTFURY_EGG, NightfuryEggRenderer::new);
+        EntityRendererRegistry.register(LLGDragonsEntities.AZTEC_NIGHTFURY, AztecNightfuryRenderer::new);
+        EntityRendererRegistry.register(LLGDragonsEntities.AZTEC_NIGHTFURY_EGG, AztecNightfuryEggRenderer::new);
         EntityRendererRegistry.register(LLGDragonsEntities.PLASMA_BLAST, PlasmaBlastRenderer::new);
     }
 

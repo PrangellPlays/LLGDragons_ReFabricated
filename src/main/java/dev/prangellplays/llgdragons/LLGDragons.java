@@ -43,5 +43,6 @@ public class LLGDragons implements ModInitializer {
 		dragosphereWhitelist.add("minecraft:wolf");
 		dragosphereWhitelist.add("minecraft:donkey");
 		dragosphereWhitelist.add("llgdragons:nightfury");
+		dragosphereWhitelist.add("llgdragons:aztec_nightfury");
 	}
 }

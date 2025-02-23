@@ -32,6 +32,8 @@ public class LLGDragonsItems {
 
     public static final Item NIGHTFURY_SPAWN_EGG;
     public static final Item NIGHTFURY_EGG;
+    public static final Item AZTEC_NIGHTFURY_SPAWN_EGG;
+    public static final Item AZTEC_NIGHTFURY_EGG;
 
     //DEV
     public static final Item PLASMA_PROJECTILE;
@@ -71,6 +73,8 @@ public class LLGDragonsItems {
 
         NIGHTFURY_SPAWN_EGG = register((String) "nightfury_spawn_egg", (Item) new SpawnEggItem(LLGDragonsEntities.NIGHTFURY, 1315860, 16701501, new FabricItemSettings()));
         NIGHTFURY_EGG = register((String) "nightfury_egg", (Item) new SpawnEggItem(LLGDragonsEntities.NIGHTFURY_EGG, 1315860, 16701501, new FabricItemSettings()));
+        AZTEC_NIGHTFURY_SPAWN_EGG = register((String) "aztec_nightfury_spawn_egg", (Item) new SpawnEggItem(LLGDragonsEntities.AZTEC_NIGHTFURY, 1315860, 3790560, new FabricItemSettings()));
+        AZTEC_NIGHTFURY_EGG = register((String) "aztec_nightfury_egg", (Item) new SpawnEggItem(LLGDragonsEntities.AZTEC_NIGHTFURY_EGG, 1315860, 3790560, new FabricItemSettings()));
 
         //DEV
         PLASMA_PROJECTILE = register((String) "plasma_projectile", (Item) new PlasmaProjectileItem(new FabricItemSettings().maxCount(1).fireproof()));

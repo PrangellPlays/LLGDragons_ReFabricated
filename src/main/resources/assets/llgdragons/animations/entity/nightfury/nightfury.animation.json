@@ -1576,6 +1576,41 @@
 					}
 				}
 			}
+		},
+		"animation.nightfury.sleep": {
+			"loop": true,
+			"bones": {
+				"NightFury": {
+					"position": {
+						"vector": [0, -9, 0]
+					}
+				},
+				"FrontRightLeg": {
+					"rotation": {
+						"vector": [85, 0, 0]
+					}
+				},
+				"BackRightLeg": {
+					"rotation": {
+						"vector": [85, 0, 0]
+					}
+				},
+				"FrontLeftLeg": {
+					"rotation": {
+						"vector": [85, 0, 0]
+					}
+				},
+				"BackLeftLeg": {
+					"rotation": {
+						"vector": [85, 0, 0]
+					}
+				},
+				"WingsOut": {
+					"scale": {
+						"vector": [0, 0, 0]
+					}
+				}
+			}
 		}
 	},
 	"geckolib_format_version": 2

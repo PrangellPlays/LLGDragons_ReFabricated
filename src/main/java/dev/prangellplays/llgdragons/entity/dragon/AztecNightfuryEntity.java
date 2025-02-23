@@ -2,7 +2,6 @@ package dev.prangellplays.llgdragons.entity.dragon;
 
 import dev.prangellplays.llgdragons.LLGDragonsClient;
 import dev.prangellplays.llgdragons.entity.DragonEntity;
-import dev.prangellplays.llgdragons.entity.FetchBallEntity;
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
 import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
@@ -19,13 +18,10 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
-import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
@@ -37,7 +33,6 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.ServerConfigHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -53,8 +48,8 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.EnumSet;
@@ -66,28 +61,28 @@ import java.util.function.Predicate;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_FLYING_SPEED;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_MOVEMENT_SPEED;
 
-public class NightfuryEntity extends DragonEntity implements GeoEntity {
+public class AztecNightfuryEntity extends DragonEntity implements GeoEntity {
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     private static final Ingredient TAMING_INGREDIENT;
     private static final Ingredient BREEDING_INGREDIENT;
 
-    private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
+    private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 
-    private static final TrackedData<Boolean> GENDER = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    private static final TrackedData<Boolean> SLEEPING = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    private static final TrackedData<Boolean> HAS_SADDLE = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> GENDER = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> SLEEPING = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> HAS_SADDLE = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
-    private static final TrackedData<Boolean> FLYING = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> START_FLYING = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> CLIENT_START_FLYING = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> CLIENT_END_FLYING = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> FLYING = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> START_FLYING = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> CLIENT_START_FLYING = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> CLIENT_END_FLYING = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
-    private static final TrackedData<Boolean> GOING_UP = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    private static final TrackedData<Boolean> GOING_DOWN = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> GOING_UP = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> GOING_DOWN = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
-    private static final TrackedData<Boolean> STILL = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> STILL = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
-    private static final TrackedData<ItemStack> MOUTH_STACK = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
+    private static final TrackedData<ItemStack> MOUTH_STACK = DataTracker.registerData(AztecNightfuryEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
 
     public static final Predicate<ItemEntity> PICKABLE_DROP_FILTER = (itemEntity) -> !itemEntity.cannotPickup() && itemEntity.isAlive();
     public static final Predicate<Entity> FOLLOWABLE_DROP_FILTER = (entity) -> entity.isAlive();
@@ -108,11 +103,11 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     public boolean still;
     private boolean readyToPlay = false;
 
-    public NightfuryEntity(EntityType<? extends TameableEntity> entityType, World world) {
+    public AztecNightfuryEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    public static DefaultAttributeContainer.Builder createNightfuryAttributes() {
+    public static DefaultAttributeContainer.Builder createAztecNightfuryAttributes() {
         return MobEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 60.0D)
                 .add(GENERIC_MOVEMENT_SPEED, 0.3f)
@@ -275,7 +270,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     @Nullable
     @Override
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
-        return LLGDragonsEntities.NIGHTFURY.create(world);
+        return LLGDragonsEntities.AZTEC_NIGHTFURY.create(world);
     }
 
     @Override
@@ -469,44 +464,44 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
-    private PlayState predicate(AnimationState<NightfuryEntity> nightfuryEntityAnimationState) {
+    private PlayState predicate(AnimationState<AztecNightfuryEntity> aztecNightfuryEntityAnimationState) {
         if (!this.isBaby()) {
             if (this.flying) {
                 if (this.boosting()) {
                     if (this.isGoingUp() && this.isInAir()) {
-                        nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingupboost", Animation.LoopType.LOOP));
+                        aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingupboost", Animation.LoopType.LOOP));
                     } else if (this.isGoingDown() && this.isInAir()) {
-                        nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingdownboost", Animation.LoopType.LOOP));
+                        aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingdownboost", Animation.LoopType.LOOP));
                     } else {
-                        nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingboost", Animation.LoopType.LOOP));
+                        aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingboost", Animation.LoopType.LOOP));
                     }
                 } else {
                     if (this.isGoingUp() && this.isInAir()) {
-                        nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingup", Animation.LoopType.LOOP));
+                        aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingup", Animation.LoopType.LOOP));
                     } else if (this.isGoingDown() && this.isInAir()) {
-                        nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingdown", Animation.LoopType.LOOP));
+                        aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingdown", Animation.LoopType.LOOP));
                     } else {
-                        nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flying", Animation.LoopType.LOOP));
+                        aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flying", Animation.LoopType.LOOP));
                     }
                 }
-            } else if (nightfuryEntityAnimationState.isMoving()) {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.walk", Animation.LoopType.LOOP));
+            } else if (aztecNightfuryEntityAnimationState.isMoving()) {
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.walk", Animation.LoopType.LOOP));
             } else if (this.isInSittingPose()) {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sit", Animation.LoopType.LOOP));
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sit", Animation.LoopType.LOOP));
             } else if (this.isDragonSleeping()) {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sleep", Animation.LoopType.LOOP));
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sleep", Animation.LoopType.LOOP));
             } else {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.idle", Animation.LoopType.LOOP));
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.idle", Animation.LoopType.LOOP));
             }
         } else {
-            if (nightfuryEntityAnimationState.isMoving()) {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.walk", Animation.LoopType.LOOP));
+            if (aztecNightfuryEntityAnimationState.isMoving()) {
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.walk", Animation.LoopType.LOOP));
             } else if (this.isInSittingPose()) {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sit", Animation.LoopType.LOOP));
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sit", Animation.LoopType.LOOP));
             } else if (this.isDragonSleeping()) {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sleep", Animation.LoopType.LOOP));
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.sleep", Animation.LoopType.LOOP));
             } else {
-                nightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.idlebaby", Animation.LoopType.LOOP));
+                aztecNightfuryEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.idlebaby", Animation.LoopType.LOOP));
             }
         }
         return PlayState.CONTINUE;
@@ -803,7 +798,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         return this.isTamed();
     }
 
-    public boolean canBreedWith(NightfuryEntity other) {
+    public boolean canBreedWith(AztecNightfuryEntity other) {
         if (other == this) {
             return false;
         } else if (other.getClass() != this.getClass()) {
@@ -813,8 +808,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         }
     }
 
-    public NightfuryEggEntity createEgg(NightfuryEntity nightfury) {
-        NightfuryEggEntity dragon = new NightfuryEggEntity(LLGDragonsEntities.NIGHTFURY_EGG, this.getWorld());
+    public AztecNightfuryEggEntity createEgg(AztecNightfuryEntity aztecNightfury) {
+        AztecNightfuryEggEntity dragon = new AztecNightfuryEggEntity(LLGDragonsEntities.AZTEC_NIGHTFURY_EGG, this.getWorld());
         dragon.setPosition(MathHelper.floor(this.getX()) + 0.5, MathHelper.floor(this.getY()) + 1, MathHelper.floor(this.getZ()) + 0.5);
         return dragon;
     }
@@ -869,11 +864,11 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     }
 
     public static class NightFurySitGoal extends Goal {
-        private final NightfuryEntity dragonEntity;
+        private final AztecNightfuryEntity dragonEntity;
 
-        public NightFurySitGoal(NightfuryEntity dragonEntity) {
+        public NightFurySitGoal(AztecNightfuryEntity dragonEntity) {
             this.dragonEntity = dragonEntity;
-            this.setControls(EnumSet.of(Goal.Control.JUMP, Goal.Control.MOVE));
+            this.setControls(EnumSet.of(Control.JUMP, Control.MOVE));
         }
 
         @Override
@@ -913,9 +908,9 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     }
 
     public static class NightFuryStillGoal extends Goal {
-        private final NightfuryEntity dragonEntity;
+        private final AztecNightfuryEntity dragonEntity;
 
-        public NightFuryStillGoal(NightfuryEntity dragonEntity) {
+        public NightFuryStillGoal(AztecNightfuryEntity dragonEntity) {
             this.dragonEntity = dragonEntity;
             this.setControls(EnumSet.of(Control.JUMP, Control.MOVE));
         }
@@ -960,11 +955,11 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     public static class MateGoal extends Goal {
         final World theWorld;
         final double moveSpeed;
-        private final NightfuryEntity dragon;
+        private final AztecNightfuryEntity dragon;
         int spawnBabyDelay;
-        private NightfuryEntity targetMate;
+        private AztecNightfuryEntity targetMate;
 
-        public MateGoal(NightfuryEntity dragon, double speedIn) {
+        public MateGoal(AztecNightfuryEntity dragon, double speedIn) {
             this.dragon = dragon;
             this.theWorld = dragon.getWorld();
             this.moveSpeed = speedIn;
@@ -1000,11 +995,11 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                 this.spawnBaby();
         }
 
-        private NightfuryEntity getNearbyMate() {
-            List<? extends NightfuryEntity> list = this.theWorld.getNonSpectatingEntities(this.dragon.getClass(), this.dragon.getBoundingBox().expand(180.0D, 180.0D, 180.0D));
+        private AztecNightfuryEntity getNearbyMate() {
+            List<? extends AztecNightfuryEntity> list = this.theWorld.getNonSpectatingEntities(this.dragon.getClass(), this.dragon.getBoundingBox().expand(180.0D, 180.0D, 180.0D));
             double d0 = Double.MAX_VALUE;
-            NightfuryEntity mate = null;
-            for (NightfuryEntity partner : list)
+            AztecNightfuryEntity mate = null;
+            for (AztecNightfuryEntity partner : list)
                 if (this.dragon.canBreedWith(partner)) {
                     double d1 = this.dragon.squaredDistanceTo(partner);
                     if (d1 < d0) {
@@ -1016,7 +1011,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         }
 
         private void spawnBaby() {
-            NightfuryEggEntity egg = this.dragon.createEgg(this.targetMate);
+            AztecNightfuryEggEntity egg = this.dragon.createEgg(this.targetMate);
             if (egg != null) {
 
                 this.dragon.setBreedingAge(6000);
@@ -1056,14 +1051,14 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
 
     public static class DragonFetchGoal extends Goal {
 
-        private final NightfuryEntity dragonEntity;
+        private final AztecNightfuryEntity dragonEntity;
         private ThrownItemEntity fetchBallEntity;
         private ItemEntity itemEntity;
         private boolean failed;
 
-        public DragonFetchGoal(NightfuryEntity dragonEntity) {
+        public DragonFetchGoal(AztecNightfuryEntity dragonEntity) {
             this.dragonEntity = dragonEntity;
-            this.setControls(EnumSet.of(Goal.Control.JUMP, Goal.Control.MOVE, Goal.Control.LOOK));
+            this.setControls(EnumSet.of(Control.JUMP, Control.MOVE, Control.LOOK));
         }
 
         @Override
@@ -1105,7 +1100,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                 return false;
             }
 
-            List<ThrownItemEntity> list = this.dragonEntity.getWorld().getEntitiesByClass(ThrownItemEntity.class, this.dragonEntity.getBoundingBox().expand(8.0D, 8.0D, 8.0D), NightfuryEntity.FOLLOWABLE_DROP_FILTER);
+            List<ThrownItemEntity> list = this.dragonEntity.getWorld().getEntitiesByClass(ThrownItemEntity.class, this.dragonEntity.getBoundingBox().expand(8.0D, 8.0D, 8.0D), AztecNightfuryEntity.FOLLOWABLE_DROP_FILTER);
 
             if (list.size() == 0) {
                 return false;
@@ -1152,7 +1147,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
 
             if (this.fetchBallEntity != null) {
                 if (this.fetchBallEntity.isRemoved()) {
-                    List<ItemEntity> list = this.dragonEntity.getWorld().getEntitiesByClass(ItemEntity.class, this.dragonEntity.getBoundingBox().expand(20.0D, 8.0D, 20.0D), NightfuryEntity.PICKABLE_DROP_FILTER);
+                    List<ItemEntity> list = this.dragonEntity.getWorld().getEntitiesByClass(ItemEntity.class, this.dragonEntity.getBoundingBox().expand(20.0D, 8.0D, 20.0D), AztecNightfuryEntity.PICKABLE_DROP_FILTER);
 
                     for (ItemEntity itemEntity : list) {
                         if (itemEntity.getStack().isIn(LLGDragonsTags.Items.FETCH_BALL)) {
@@ -1193,7 +1188,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                     }
 
                     this.dragonEntity.setStackInMouth(this.itemEntity.getStack());
-                    this.itemEntity.remove(Entity.RemovalReason.KILLED);
+                    this.itemEntity.remove(RemovalReason.KILLED);
                     this.dragonEntity.getNavigation().startMovingTo(this.dragonEntity.getOwner(), 1);
                     return;
                 }

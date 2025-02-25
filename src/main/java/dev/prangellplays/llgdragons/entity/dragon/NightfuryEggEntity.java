@@ -146,7 +146,7 @@ public class NightfuryEggEntity extends MobEntity implements GeoEntity {
             assert dragon != null;
             dragon.setGender(this.getRandom().nextBoolean());
             dragon.setPosition(this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 1, this.getBlockPos().getZ() + 0.5);
-            dragon.setBaby(true);
+            dragon.setDayCountAge(0);
 
             if (!this.getWorld().isClient()) {
                 this.getWorld().spawnEntity(dragon);

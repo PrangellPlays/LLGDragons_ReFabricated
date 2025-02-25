@@ -193,7 +193,7 @@ public class AztecNightfuryEggEntity extends MobEntity implements GeoEntity {
     }
 
     private ItemStack getItem() {
-        return new ItemStack(LLGDragonsItems.NIGHTFURY_EGG);
+        return new ItemStack(LLGDragonsItems.AZTEC_NIGHTFURY_EGG);
     }
 
     @Override

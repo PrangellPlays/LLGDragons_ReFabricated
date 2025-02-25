@@ -89,6 +89,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
 
     private static final TrackedData<ItemStack> MOUTH_STACK = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
 
+    private static final TrackedData<Integer> DAY_COUNT_AGE = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.INTEGER);
+
     public static final Predicate<ItemEntity> PICKABLE_DROP_FILTER = (itemEntity) -> !itemEntity.cannotPickup() && itemEntity.isAlive();
     public static final Predicate<Entity> FOLLOWABLE_DROP_FILTER = (entity) -> entity.isAlive();
 
@@ -107,6 +109,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     public int diveSoundChance;
     public boolean still;
     private boolean readyToPlay = false;
+    public int day_count_age;
 
     public NightfuryEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -132,6 +135,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         nbt.putBoolean("saddled", this.dataTracker.get(HAS_SADDLE));
         nbt.putBoolean("still", this.dataTracker.get(STILL));
         nbt.putBoolean("sleeping", this.isDragonSleeping());
+        nbt.putInt("day_count_age", this.dataTracker.get(DAY_COUNT_AGE));
     }
 
     @Override
@@ -160,6 +164,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         this.still = nbt.getBoolean("still");
         this.dataTracker.set(STILL, this.still);
         this.setIsDragonSleeping(nbt.getBoolean("sleeping"));
+        this.day_count_age = nbt.getInt("day_count_age");
+        this.dataTracker.set(DAY_COUNT_AGE, this.day_count_age);
     }
 
     @Override
@@ -182,6 +188,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         this.dataTracker.startTracking(STILL, false);
 
         this.dataTracker.startTracking(MOUTH_STACK, new ItemStack(Items.AIR));
+
+        this.dataTracker.startTracking(DAY_COUNT_AGE, 0);
     }
 
     @Override
@@ -206,7 +214,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     }
 
     public boolean canFly() {
-        return !this.isBaby();
+        return !(this.day_count_age < 6);
     }
 
     public boolean shouldFly() {
@@ -270,6 +278,10 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
 
     public void setGoingDown(boolean goingDown) {
         this.dataTracker.set(GOING_DOWN, goingDown);
+    }
+
+    public void setDayCountAge(int age) {
+        this.dataTracker.set(DAY_COUNT_AGE, age);
     }
 
     @Nullable
@@ -345,7 +357,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                 setReadyToPlay(true);
             }
 
-            if (item == Items.SADDLE && !this.isBaby()) {
+            if (item == Items.SADDLE && !(this.day_count_age < 6)) {
                 this.getWorld().playSoundFromEntity((PlayerEntity) null, this, SoundEvents.ENTITY_HORSE_SADDLE, SoundCategory.NEUTRAL, 0.8F, 1.0F);
                 if (!player.isCreative()) {
                     itemstack.decrement(1);
@@ -355,7 +367,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
             }
         }
 
-        if(isTamed() && hand == Hand.MAIN_HAND && !isTamingItem(itemstack) && !isBreedingItem(itemstack) && item != LLGDragonsItems.FETCH_BALL && item != itemForSitting && item != LLGDragonsItems.DRAGOSPHERE && item != LLGDragonsItems.STILLNESS_STAFF && item != LLGDragonsItems.TELLING_BOOK && this.dataTracker.get(HAS_SADDLE) && !isBaby()) {
+        if(isTamed() && hand == Hand.MAIN_HAND && !isTamingItem(itemstack) && !isBreedingItem(itemstack) && item != LLGDragonsItems.FETCH_BALL && item != itemForSitting && item != LLGDragonsItems.DRAGOSPHERE && item != LLGDragonsItems.STILLNESS_STAFF && item != LLGDragonsItems.TELLING_BOOK && this.dataTracker.get(HAS_SADDLE) && !(this.day_count_age < 6)) {
             if (isInSittingPose()) {
                 boolean sitting = !isInSittingPose();
                 setSitting(sitting);
@@ -402,7 +414,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     }
 
     private void spawnItemParticles(ItemStack stack, int count) {
-        if (!this.isBaby()) {
+        if (!(this.day_count_age < 6)) {
             for (int i = 0; i < count; ++i) {
                 Vec3d vec3d = new Vec3d(((double) this.random.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
                 vec3d = vec3d.rotateX(-this.getPitch() * 0.017453292F);
@@ -470,7 +482,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     }
 
     private PlayState predicate(AnimationState<NightfuryEntity> nightfuryEntityAnimationState) {
-        if (!this.isBaby()) {
+        if (!(this.day_count_age < 6)) {
             if (this.flying) {
                 if (this.boosting()) {
                     if (this.isGoingUp() && this.isInAir()) {
@@ -599,6 +611,20 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
             sleepMechanics();
             if (this.isDragonSleeping()) this.getNavigation().stop();
         }
+
+        if (this.age == 24000) {
+            this.setDayCountAge(1);
+        } else if (this.age == 48000) {
+            this.setDayCountAge(2);
+        } else if (this.age == 72000) {
+            this.setDayCountAge(3);
+        } else if (this.age == 96000) {
+            this.setDayCountAge(4);
+        } else if (this.age == 120000) {
+            this.setDayCountAge(5);
+        } else if (this.age == 144000) {
+            this.setDayCountAge(6);
+        }
     }
 
     public int getMinFlapSoundDelay() {
@@ -635,7 +661,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
 
     @Override
     public float getSoundPitch() {
-        if (this.isBaby()) {
+        if (this.day_count_age < 6) {
             return 1.3f;
         } else {
             return 1.0F;
@@ -1081,7 +1107,7 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
                 return false;
             }
 
-            if (this.dragonEntity.isBaby()) {
+            if (this.dragonEntity.day_count_age < 6) {
                 return false;
             }
 

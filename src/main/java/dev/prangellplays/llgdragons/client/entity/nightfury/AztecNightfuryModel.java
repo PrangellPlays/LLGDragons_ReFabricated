@@ -9,7 +9,7 @@ import software.bernie.geckolib.model.GeoModel;
 public class AztecNightfuryModel extends GeoModel<AztecNightfuryEntity> {
     @Override
     public Identifier getModelResource(AztecNightfuryEntity animatable) {
-        return new Identifier(LLGDragons.MOD_ID, "geo/entity/nightfury/nightfury.geo.json");
+        return new Identifier(LLGDragons.MOD_ID, "geo/entity/nightfury/aztec_nightfury.geo.json");
     }
 
     @Override

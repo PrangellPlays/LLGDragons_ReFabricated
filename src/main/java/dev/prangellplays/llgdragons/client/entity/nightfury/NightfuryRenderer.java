@@ -22,8 +22,17 @@ public class NightfuryRenderer extends GeoEntityRenderer<NightfuryEntity> {
 
     @Override
     public void render(NightfuryEntity entity, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
-        if (entity.isBaby()) {
+        if (entity.day_count_age < 3) {
             poseStack.scale(0.4f, 0.4f, 0.4f);
+        }
+        if (entity.day_count_age < 4) {
+            poseStack.scale(0.6f, 0.6f, 0.6f);
+        }
+        if (entity.day_count_age < 5) {
+            poseStack.scale(1.0f, 1.0f, 1.0f);
+        }
+        if (entity.day_count_age < 6) {
+            poseStack.scale(1.3f, 1.3f, 1.3f);
         }
 
         poseStack.scale(1.5f, 1.5f, 1.5f);

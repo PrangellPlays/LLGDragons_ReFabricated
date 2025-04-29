@@ -1,8 +1,7 @@
-package dev.prangellplays.llgdragons.client.entity.nightfury;
+package dev.prangellplays.llgdragons.client.entity.nightfury.model;
 
 import dev.prangellplays.llgdragons.LLGDragons;
-import dev.prangellplays.llgdragons.entity.dragon.NightfuryEggEntity;
-import dev.prangellplays.llgdragons.entity.dragon.NightfuryEntity;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.NightfuryEggEntity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 

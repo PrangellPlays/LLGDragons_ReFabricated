@@ -37,6 +37,7 @@
 	"mixins": [
 		"llgdragons.mixins.json"
 	],
+	"accessWidener": "llgdragons.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.16.10",
 		"minecraft": "~1.20.1",

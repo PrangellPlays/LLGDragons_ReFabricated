@@ -1,30 +1,17 @@
 package dev.prangellplays.llgdragons.item;
 
 import dev.prangellplays.llgdragons.LLGDragons;
-import dev.prangellplays.llgdragons.entity.DragonEntity;
 import dev.prangellplays.llgdragons.entity.FetchBallEntity;
-import dev.prangellplays.llgdragons.entity.dragon.NightfuryEntity;
-import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.UUID;
 
 public class FetchBallItem extends Item {
     public FetchBallItem(Settings settings) {

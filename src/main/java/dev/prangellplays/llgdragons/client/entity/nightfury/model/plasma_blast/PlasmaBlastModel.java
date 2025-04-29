@@ -1,4 +1,4 @@
-package dev.prangellplays.llgdragons.client.entity.nightfury;
+package dev.prangellplays.llgdragons.client.entity.nightfury.model.plasma_blast;
 
 import dev.prangellplays.llgdragons.LLGDragons;
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;

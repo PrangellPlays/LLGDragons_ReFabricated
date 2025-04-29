@@ -1,0 +1,4 @@
+accessWidener v2 named
+accessible method net/minecraft/client/render/Camera moveBy (DDD)V
+accessible method net/minecraft/client/render/Camera clipToSpace (D)D
+accessible method net/minecraft/world/World getDestructionType (Lnet/minecraft/world/GameRules$Key;)Lnet/minecraft/world/explosion/Explosion$DestructionType;

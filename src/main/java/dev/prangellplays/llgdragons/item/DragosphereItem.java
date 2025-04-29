@@ -1,6 +1,7 @@
 package dev.prangellplays.llgdragons.item;
 
 import dev.prangellplays.llgdragons.LLGDragons;
+import dev.prangellplays.llgdragons.entity.DragonEntity;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -41,41 +42,43 @@ public class DragosphereItem  extends Item {
         if (!player.getWorld().isClient) {
             String entityId = EntityType.getId(target.getType()).toString();
 
-            if (!LLGDragons.dragosphereWhitelist.contains(entityId)) {
-                if (player instanceof ServerPlayerEntity serverPlayerEntity) {
-                    serverPlayerEntity.networkHandler.sendPacket(new OverlayMessageS2CPacket(Text.translatable("item.llgdragons.dragosphere.cannot_capture")));
+            if (target instanceof DragonEntity dragon && dragon.isOwner(player)) {
+                if (!LLGDragons.dragosphereWhitelist.contains(entityId)) {
+                    if (player instanceof ServerPlayerEntity serverPlayerEntity) {
+                        serverPlayerEntity.networkHandler.sendPacket(new OverlayMessageS2CPacket(Text.translatable("item.llgdragons.dragosphere.cannot_capture")));
+                    }
+                    return ActionResult.FAIL;
                 }
-                return ActionResult.FAIL;
+
+                if (player.getItemCooldownManager().isCoolingDown(this)) {
+                    return ActionResult.PASS;
+                }
+
+                NbtCompound nbt = stack.getOrCreateNbt();
+
+                if (nbt.contains("CapturedDragon")) {
+                    return ActionResult.FAIL;
+                }
+
+                try {
+                    NbtCompound entityTag = new NbtCompound();
+                    target.writeNbt(entityTag);
+
+                    nbt.putString("CapturedDragonType", entityId);
+                    nbt.put("CapturedDragon", entityTag);
+
+                    target.remove(Entity.RemovalReason.DISCARDED);
+                } catch (Exception e) {
+                    LOGGER.error("Error capturing dragon: " + e.getMessage());
+                    return ActionResult.FAIL;
+                }
+
+                player.getWorld().playSound((PlayerEntity) null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.NEUTRAL, 0.5F, 0.4F / (player.getWorld().getRandom().nextFloat() * 0.4F + 0.8F));
+
+                player.getItemCooldownManager().set(this, 20);
+
+                return ActionResult.SUCCESS;
             }
-
-            if (player.getItemCooldownManager().isCoolingDown(this)) {
-                return ActionResult.PASS;
-            }
-
-            NbtCompound nbt = stack.getOrCreateNbt();
-
-            if (nbt.contains("CapturedDragon")) {
-                return ActionResult.FAIL;
-            }
-
-            try {
-                NbtCompound entityTag = new NbtCompound();
-                target.writeNbt(entityTag);
-
-                nbt.putString("CapturedDragonType", entityId);
-                nbt.put("CapturedDragon", entityTag);
-
-                target.remove(Entity.RemovalReason.DISCARDED);
-            } catch (Exception e) {
-                LOGGER.error("Error capturing dragon: " + e.getMessage());
-                return ActionResult.FAIL;
-            }
-
-            player.getWorld().playSound((PlayerEntity)null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.NEUTRAL, 0.5F, 0.4F / (player.getWorld().getRandom().nextFloat() * 0.4F + 0.8F));
-
-            player.getItemCooldownManager().set(this, 20);
-
-            return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;
     }
@@ -156,7 +159,12 @@ public class DragosphereItem  extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         NbtCompound nbt = stack.getNbt();
         if (nbt != null && nbt.contains("CapturedDragonType")) {
-            MutableText entityText = Text.translatable("item.llgdragons.dragosphere.captured").setStyle(Style.EMPTY.withColor(Formatting.GRAY));
+            if (nbt != null && nbt.getCompound("CapturedDragon").contains("CustomName")) {
+                tooltip.add(Text.translatable("item.llgdragons.dragosphere.name").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY)).append(Text.literal(nbt.getCompound("CapturedDragon").getString("CustomName").toString().substring(9, nbt.getCompound("CapturedDragon").getString("CustomName").toString().length() - 2)).formatted(Formatting.GREEN)));
+            } else if (nbt != null && !nbt.getCompound("CapturedDragon").contains("CustomName")) {
+                tooltip.add(Text.translatable("item.llgdragons.dragosphere.name").formatted(Formatting.GRAY).append(Text.literal(":").formatted(Formatting.GRAY)));
+            }
+            MutableText entityText = Text.translatable("item.llgdragons.dragosphere.species").setStyle(Style.EMPTY.withColor(Formatting.GRAY));
             entityText.append(Text.literal(": ").setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
             MutableText entityAppend = Text.translatable("item.llgdragons.dragosphere.no_dragon").setStyle(Style.EMPTY.withColor(Formatting.DARK_RED));
             if (nbt != null && nbt.contains("CapturedDragon") && nbt.contains("CapturedDragonType")) {
@@ -167,9 +175,17 @@ public class DragosphereItem  extends Item {
             }
             entityText.append(entityAppend);
             tooltip.add(entityText);
-            if (nbt != null && nbt.getCompound("CapturedDragon").contains("CustomName")) {
-                tooltip.add(Text.literal(nbt.getCompound("CapturedDragon").getString("CustomName").toString().substring(9, nbt.getCompound("CapturedDragon").getString("CustomName").toString().length() - 2)));
+            if (nbt != null && nbt.getCompound("CapturedDragon").contains("gender") && nbt.getCompound("CapturedDragon").getInt("gender") == 1) {
+                tooltip.add(Text.translatable("item.llgdragons.dragosphere.gender").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.translatable("item.llgdragons.dragosphere.female").formatted(Formatting.GREEN))));
+            } else {
+                tooltip.add(Text.translatable("item.llgdragons.dragosphere.gender").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.translatable("item.llgdragons.dragosphere.male").formatted(Formatting.GREEN))));
             }
+            if (nbt.getCompound("CapturedDragon").getInt("day_count_age") < 6) {
+                tooltip.add(Text.translatable("item.llgdragons.dragosphere.age").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.literal(String.valueOf(nbt.getCompound("CapturedDragon").getInt("day_count_age"))).append(Text.literal(" ")).append(Text.translatable("item.llgdragons.dragosphere.days").append(Text.literal(" (").append(Text.translatable("item.llgdragons.telling_book.age.baby").append(Text.literal(")"))))).formatted(Formatting.GREEN))));
+            } else {
+                tooltip.add(Text.translatable("item.llgdragons.dragosphere.age").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.literal(String.valueOf(nbt.getCompound("CapturedDragon").getInt("day_count_age"))).append(Text.literal(" ")).append(Text.translatable("item.llgdragons.dragosphere.days").append(Text.literal(" (").append(Text.translatable("item.llgdragons.telling_book.age.adult").append(Text.literal(")"))))).formatted(Formatting.GREEN))));
+            }
+            tooltip.add(Text.translatable("item.llgdragons.dragosphere.favourite_food").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.translatable(String.valueOf(nbt.getCompound("CapturedDragon").getString("favourite_food"))).formatted(Formatting.GREEN))));
             //tooltip.add(Text.translatable("item.llgdragons.dragosphere.captured").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY)).append(Text.literal(entityTypeString).formatted(Formatting.GREEN)));
         } else {
             tooltip.add(Text.translatable("item.llgdragons.dragosphere.no_dragon").formatted(Formatting.DARK_RED));

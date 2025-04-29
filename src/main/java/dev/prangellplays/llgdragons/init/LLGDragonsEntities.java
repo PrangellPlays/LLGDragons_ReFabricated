@@ -2,10 +2,10 @@ package dev.prangellplays.llgdragons.init;
 
 import dev.prangellplays.llgdragons.LLGDragons;
 import dev.prangellplays.llgdragons.entity.FetchBallEntity;
-import dev.prangellplays.llgdragons.entity.dragon.AztecNightfuryEggEntity;
-import dev.prangellplays.llgdragons.entity.dragon.AztecNightfuryEntity;
-import dev.prangellplays.llgdragons.entity.dragon.NightfuryEggEntity;
-import dev.prangellplays.llgdragons.entity.dragon.NightfuryEntity;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.AztecNightfuryEggEntity;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.AztecNightfuryEntity;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.NightfuryEggEntity;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.NightfuryEntity;
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;

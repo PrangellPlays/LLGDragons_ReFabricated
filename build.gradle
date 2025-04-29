@@ -10,6 +10,10 @@ base {
 	archivesName = project.archives_base_name
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/llgdragons.accesswidener")
+}
+
 repositories {
 	maven {
 		name = "TerraformersMC"

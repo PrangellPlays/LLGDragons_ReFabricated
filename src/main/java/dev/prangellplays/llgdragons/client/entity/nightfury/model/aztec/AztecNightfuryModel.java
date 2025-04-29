@@ -1,8 +1,7 @@
-package dev.prangellplays.llgdragons.client.entity.nightfury;
+package dev.prangellplays.llgdragons.client.entity.nightfury.model.aztec;
 
 import dev.prangellplays.llgdragons.LLGDragons;
-import dev.prangellplays.llgdragons.entity.dragon.AztecNightfuryEntity;
-import dev.prangellplays.llgdragons.entity.dragon.NightfuryEntity;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.AztecNightfuryEntity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -14,7 +13,7 @@ public class AztecNightfuryModel extends GeoModel<AztecNightfuryEntity> {
 
     @Override
     public Identifier getTextureResource(AztecNightfuryEntity animatable) {
-        return new Identifier(LLGDragons.MOD_ID, "textures/entity/nightfury/aztec_nightfury.png");
+        return new Identifier(LLGDragons.MOD_ID, "textures/entity/nightfury/nightfury.png");
     }
 
     @Override

@@ -1,8 +1,8 @@
-package dev.prangellplays.llgdragons.client.entity.nightfury;
+package dev.prangellplays.llgdragons.client.entity.nightfury.renderer.aztec;
 
 import dev.prangellplays.llgdragons.LLGDragons;
-import dev.prangellplays.llgdragons.entity.dragon.AztecNightfuryEggEntity;
-import dev.prangellplays.llgdragons.entity.dragon.NightfuryEggEntity;
+import dev.prangellplays.llgdragons.client.entity.nightfury.model.aztec.AztecNightfuryEggModel;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.AztecNightfuryEggEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;

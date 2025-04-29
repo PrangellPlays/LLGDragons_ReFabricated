@@ -1,20 +1,21 @@
-package dev.prangellplays.llgdragons.entity.dragon;
+package dev.prangellplays.llgdragons.entity;
 
 import com.google.common.collect.ImmutableList;
 import dev.prangellplays.llgdragons.LLGDragons;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.NightfuryEggEntity;
+import dev.prangellplays.llgdragons.entity.dragon.nightfury.NightfuryEntity;
 import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
 import dev.prangellplays.llgdragons.init.LLGDragonsSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -23,44 +24,18 @@ import net.minecraft.server.ServerConfigHandler;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Arm;
 import net.minecraft.world.World;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class AztecNightfuryEggEntity extends MobEntity implements GeoEntity {
-    private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
-    }
+import static dev.prangellplays.llgdragons.entity.DragonEntity.*;
 
-    private PlayState predicate(AnimationState<AztecNightfuryEggEntity> aztecNightfuryEntityAnimationState) {
-        return PlayState.CONTINUE;
-    }
+public class DragonEggEntity extends MobEntity {
+    protected static final TrackedData<Optional<UUID>> OWNER_UNIQUE_ID = DataTracker.registerData(DragonEggEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
+    private static final TrackedData<Integer> DRAGON_AGE = DataTracker.registerData(DragonEggEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
-    }
-
-    protected static final TrackedData<Optional<UUID>> OWNER_UNIQUE_ID = DataTracker.registerData(AztecNightfuryEggEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
-    private static final TrackedData<Integer> DRAGON_AGE = DataTracker.registerData(AztecNightfuryEggEntity.class, TrackedDataHandlerRegistry.INTEGER);
-
-    public AztecNightfuryEggEntity(EntityType<AztecNightfuryEggEntity> type, World worldIn) {
+    public DragonEggEntity(EntityType<? extends DragonEggEntity> type, World worldIn) {
         super(type, worldIn);
-    }
-
-    public static DefaultAttributeContainer.Builder createAztecNightfuryEggAttributes() {
-        return MobEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0D);
     }
 
     @Override
@@ -133,32 +108,7 @@ public class AztecNightfuryEggEntity extends MobEntity implements GeoEntity {
     }
 
     public void updateEggCondition() {
-        this.setDragonAge(this.getDragonAge() + 1);
 
-        if (this.getDragonAge() > 500) {
-            AztecNightfuryEntity dragon = LLGDragonsEntities.AZTEC_NIGHTFURY.create(this.getWorld());
-
-            if (this.hasCustomName()) {
-                assert dragon != null;
-                dragon.setCustomName(this.getCustomName());
-            }
-
-            assert dragon != null;
-            dragon.setGender(this.getRandom().nextBoolean());
-            dragon.setPosition(this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 1, this.getBlockPos().getZ() + 0.5);
-            dragon.setBaby(true);
-
-            if (!this.getWorld().isClient()) {
-                this.getWorld().spawnEntity(dragon);
-            }
-
-            if (this.hasCustomName()) {
-                dragon.setCustomName(this.getCustomName());
-            }
-
-            this.getWorld().playSound(this.getX(), this.getY() + this.getStandingEyeHeight(), this.getZ(), LLGDragonsSounds.DRAGON_EGG_HATCH, this.getSoundCategory(), 2.5F, 1.0F, false);
-            this.remove(RemovalReason.DISCARDED);
-        }
     }
 
     @Override
@@ -192,8 +142,8 @@ public class AztecNightfuryEggEntity extends MobEntity implements GeoEntity {
         return true;
     }
 
-    private ItemStack getItem() {
-        return new ItemStack(LLGDragonsItems.AZTEC_NIGHTFURY_EGG);
+    public ItemStack getItem() {
+        return new ItemStack(ItemStack.EMPTY.getItem());
     }
 
     @Override

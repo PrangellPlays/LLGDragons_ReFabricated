@@ -5,6 +5,9 @@ import dev.prangellplays.llgdragons.init.LLGDragonsBlocks;
 import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
 import dev.prangellplays.llgdragons.item.DragosphereItem;
+import dev.prangellplays.llgdragons.network.KeyInputPacket;
+import dev.prangellplays.llgdragons.network.KeyInputSyncPacket;
+import dev.prangellplays.llgdragons.network.KeyInputSyncS2CPacket;
 import dev.prangellplays.llgdragons.util.LLGDragonsRegistries;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -25,13 +28,7 @@ public class LLGDragonsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        //Entity Renderer & Block Render Layer Map & Particles
         LLGDragonsRegistries.initClient();
-
-        //Model Predicate
-        ModelPredicateProviderRegistry.register(LLGDragonsItems.DRAGOSPHERE, LLGDragons.id("dragosphere_full"), (stack, world, entity, i) -> {
-            return DragosphereItem.hasCapturedDragon(stack) ? 1.0F : 0.0F;
-        });
 
         //Keybinding
         descend = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.llgdragons.descend", InputUtil.Type.KEYSYM, 162, "category.llgdragons"));

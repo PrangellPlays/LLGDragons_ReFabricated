@@ -18,7 +18,8 @@ public class PlasmaProjectileItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         PlasmaBlastEntity plasmaBlastEntity = new PlasmaBlastEntity(world, user, user.getX(), user.getY(), user.getZ());
         //plasmaBlastEntity.refreshPositionAndAngles(user.getX(), user.getY() + user.getBoundingBox().getYLength() * 0.65D + (user.getPitch() > 0F ? -user.getPitch() / 40F : -user.getPitch() / 80F), user.getZ() * 3D, user.getYaw(), user.getPitch());
-        plasmaBlastEntity.setVelocity(user.getX(), user.getEyeY(), user.getZ(), 2, 1);
+        plasmaBlastEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.5f, 3.0f, 5.0f);
+        plasmaBlastEntity.addVelocity(Vec3d.fromPolar(user.getPitch(), user.getYaw()));
         world.spawnEntity(plasmaBlastEntity);
         return super.use(world, user, hand);
     }

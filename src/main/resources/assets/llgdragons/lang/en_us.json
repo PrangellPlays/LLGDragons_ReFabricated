@@ -67,6 +67,15 @@
   "entity.llgdragons.aztec_nightfury_egg": "Aztec Night Fury Egg",
   "entity.llgdragons.plasma_blast": "Plasma Blast",
 
+  "__Comment": "Night Fury Variant",
+  "llgdragons.variant.nightfury.nightfury": "Night Fury",
+  "llgdragons.variant.nightfury.albino_nightfury": "Albino Night Fury",
+  "llgdragons.variant.nightfury.white_nightfury": "White Night Fury",
+  "llgdragons.variant.nightfury.black_sparkles": "Black Sparkles",
+  "llgdragons.variant.nightfury.pink_sparkles": "Pink Sparkles",
+  "llgdragons.variant.nightfury.httyd_nightfury": "HTTYD Night Fury",
+  "llgdragons.variant.nightfury.toothless_httyd1": "Toothless HTTYD 1",
+
   "__Comment": "Subtitle",
   "sounds.llgdragons.dragon_egg_hatch": "Dragon Egg Hatch",
   "sounds.llgdragons.nightfury_roar": "Night Fury Roars",

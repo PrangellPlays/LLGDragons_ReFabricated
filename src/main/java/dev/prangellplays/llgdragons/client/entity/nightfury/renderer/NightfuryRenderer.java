@@ -1,7 +1,7 @@
 package dev.prangellplays.llgdragons.client.entity.nightfury.renderer;
 
-import dev.prangellplays.llgdragons.LLGDragons;
 import dev.prangellplays.llgdragons.client.entity.nightfury.model.NightfuryModel;
+import dev.prangellplays.llgdragons.data.nightfury.NightfuryVariant;
 import dev.prangellplays.llgdragons.entity.dragon.nightfury.NightfuryEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -16,7 +16,8 @@ public class NightfuryRenderer extends GeoEntityRenderer<NightfuryEntity> {
 
     @Override
     public Identifier getTextureLocation(NightfuryEntity animatable) {
-        return new Identifier(LLGDragons.MOD_ID, "textures/entity/nightfury/nightfury.png");
+        NightfuryVariant variant = animatable.getVariant();
+        return variant.getTexture();
     }
 
     @Override

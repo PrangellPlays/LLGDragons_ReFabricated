@@ -1,6 +1,8 @@
 package dev.prangellplays.llgdragons.entity.dragon.nightfury;
 
+import dev.prangellplays.llgdragons.LLGDragons;
 import dev.prangellplays.llgdragons.LLGDragonsClient;
+import dev.prangellplays.llgdragons.data.nightfury.NightfuryVariant;
 import dev.prangellplays.llgdragons.entity.DragonEntity;
 import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.NightfuryEggEntity;
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
@@ -15,6 +17,9 @@ import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
@@ -22,7 +27,9 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -41,15 +48,40 @@ import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_FLYING_SPEED;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_MOVEMENT_SPEED;
 
-public class NightfuryEntity extends DragonEntity implements GeoEntity {
+public class NightfuryEntity extends DragonEntity implements VariantHolder<NightfuryVariant>, GeoEntity {
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+
+    private static final TrackedData<Integer> VARIANT_ID = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
     public NightfuryEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+        this.dataTracker.startTracking(VARIANT_ID, NightfuryVariant.toId(this.getWorld().getRegistryManager(), NightfuryVariant.NIGHTFURY));
+    }
+
+    @Override
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        this.getWorld().getRegistryManager().get(LLGDragons.NIGHTFURY_VARIANT_KEY)
+                .getEntry(NightfuryVariant.toId(this.getWorld().getRegistryManager(), this.getVariant()))
+                .flatMap(RegistryEntry.Reference::getKey)
+                .ifPresent(key -> nbt.putString("variant", key.getValue().toString()));
+    }
+
+    @Override
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        NightfuryVariant variant = NightfuryVariant.fromNbt(this.getWorld().getRegistryManager(), nbt);
+        if(variant != null) this.setVariant(variant);
     }
 
     public static DefaultAttributeContainer.Builder createDragonAttributes() {
@@ -79,12 +111,15 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
     @Nullable
     @Override
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
+        //NightfuryVariant variant = this.getVariant();
+
         this.setGender(this.getRandom().nextBoolean());
         this.setDayCountAge(0);
         this.setBaby(true);
         this.setAgeInt(base_day_length);
         this.chooseFavouriteFood();
         this.dataTracker.set(FAVOURITE_FOOD, favouriteFood);
+        //this.setVariant(variant);
         return LLGDragonsEntities.NIGHTFURY.create(world);
     }
 
@@ -197,7 +232,8 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         for (int i = 0; i < 1; ++i) {
             PlasmaBlastEntity projectileEntity = new PlasmaBlastEntity(getWorld(), this, 0, 0, 0);
             projectileEntity.setPosition(this.getX(), this.getY() + 1, this.getZ());
-            projectileEntity.setVelocity(this, this.getPitch(), this.getYaw() - yaw, 0.5f, 3.0f, 5.0f);
+            projectileEntity.setVelocity(this, this.getPitch(), this.getYaw(), 0.5f, 3.0f, 5.0f);
+            //projectileEntity.addVelocity(Vec3d.fromPolar(this.getPitch(), this.getYaw()));
             getWorld().spawnEntity(projectileEntity);
         }
     }
@@ -280,6 +316,17 @@ public class NightfuryEntity extends DragonEntity implements GeoEntity {
         NightfuryEggEntity dragon = new NightfuryEggEntity(LLGDragonsEntities.NIGHTFURY_EGG, this.getWorld());
         dragon.setPosition(MathHelper.floor(this.getX()) + 0.5, MathHelper.floor(this.getY()) + 1, MathHelper.floor(this.getZ()) + 0.5);
         return dragon;
+    }
+
+    @Override
+    public NightfuryVariant getVariant() {
+        return NightfuryVariant.fromId(this.getWorld().getRegistryManager(), this.dataTracker.get(VARIANT_ID));
+    }
+
+    @Override
+    public void setVariant(NightfuryVariant variant) {
+        int id = NightfuryVariant.toId(this.getWorld().getRegistryManager(), variant);
+        this.dataTracker.set(VARIANT_ID, id);
     }
 
     public static class NightFuryMateGoal extends Goal {

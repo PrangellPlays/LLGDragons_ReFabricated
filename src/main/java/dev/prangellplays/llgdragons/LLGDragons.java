@@ -1,13 +1,13 @@
 package dev.prangellplays.llgdragons;
 
 import dev.prangellplays.llgdragons.config.LLGDragonsConfig;
-import dev.prangellplays.llgdragons.data.nightfury.NightfuryVariant;
+import dev.prangellplays.llgdragons.data.nightfury.eggcombination.NightfuryEggCombination;
+import dev.prangellplays.llgdragons.data.nightfury.variant.NightfuryVariant;
 import dev.prangellplays.llgdragons.util.LLGDragonsRegistries;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
@@ -23,6 +23,7 @@ public class LLGDragons implements ModInitializer {
 	public static final List<String> dragosphereWhitelist = new ArrayList<>();
 
 	public static final RegistryKey<Registry<NightfuryVariant>> NIGHTFURY_VARIANT_KEY = RegistryKey.ofRegistry(Identifier.of(MOD_ID, "variant/nightfury_variant"));
+	public static final RegistryKey<Registry<NightfuryEggCombination>> NIGHTFURY_EGG_COMBINATION_KEY = RegistryKey.ofRegistry(Identifier.of(MOD_ID, "egg_combination/nightfury_egg_combination"));
 
 	@Override
 	public void onInitialize() {
@@ -30,6 +31,7 @@ public class LLGDragons implements ModInitializer {
 		LLGDragonsRegistries.init();
 
 		DynamicRegistries.registerSynced(NIGHTFURY_VARIANT_KEY, NightfuryVariant.CODEC);
+		DynamicRegistries.registerSynced(NIGHTFURY_EGG_COMBINATION_KEY, NightfuryEggCombination.CODEC);
 
 		whitelist();
 	}

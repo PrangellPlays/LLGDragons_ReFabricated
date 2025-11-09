@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "llgdragons:gronckle_iron_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "GG",
+    "GS",
+    " S"
+  ],
+  "result": {
+    "item": "llgdragons:gronckle_iron_axe"
+  },
+  "show_notification": true
+}

@@ -11,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.RenderUtils;
@@ -29,10 +30,18 @@ public class PlasmaBlastRenderer extends GeoEntityRenderer<PlasmaBlastEntity> {
     @Override
     public void render(PlasmaBlastEntity entity, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
         poseStack.push();
-        float yawAngle = MathHelper.lerp(partialTick, entity.prevYaw, entity.getYaw());
-        float pitchAngle = MathHelper.lerp(partialTick, entity.prevPitch, entity.getPitch());
-        poseStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yawAngle));
-        poseStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(pitchAngle * 24));
+
+        Vec3d velocity = entity.getVelocity();
+        double horizontalSpeed = Math.sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
+        float velocityYaw = (float)(MathHelper.atan2(velocity.z, velocity.x) * (180F / Math.PI)) - 90F;
+        float velocityPitch = (float)(MathHelper.atan2(velocity.y, horizontalSpeed) * (180F / Math.PI));
+
+        poseStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-velocityYaw));
+        poseStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(velocityPitch));
+
+        float spin = (entity.age + partialTick) * 20;
+        poseStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(spin));
+
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         poseStack.pop();
     }

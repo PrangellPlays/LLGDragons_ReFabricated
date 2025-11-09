@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "llgdragons:item/gronckle_iron_sword"
+  }
+}

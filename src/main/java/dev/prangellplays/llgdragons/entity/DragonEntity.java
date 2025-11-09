@@ -1,11 +1,13 @@
 package dev.prangellplays.llgdragons.entity;
 
+import dev.prangell.lumicode.entity.ai.LumicodePathFinderNavigateGround;
 import dev.prangellplays.llgdragons.LLGDragonsClient;
-import dev.prangellplays.llgdragons.entity.ai.LLGDragonsPathNavigateGround;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
 import dev.prangellplays.llgdragons.init.LLGDragonsSounds;
 import dev.prangellplays.llgdragons.util.DragonCameraManager;
 import dev.prangellplays.llgdragons.util.LLGDragonsTags;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.*;
@@ -15,6 +17,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
@@ -23,6 +26,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -43,6 +47,10 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector4f;
+import software.bernie.geckolib.animatable.GeoEntity;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -51,7 +59,7 @@ import java.util.stream.Collectors;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_FLYING_SPEED;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_MOVEMENT_SPEED;
 
-public abstract class DragonEntity extends TameableEntity {
+public abstract class DragonEntity extends TameableEntity implements GeoEntity {
     private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 
     private static final TrackedData<Boolean> GENDER = DataTracker.registerData(DragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -115,6 +123,9 @@ public abstract class DragonEntity extends TameableEntity {
     protected int primaryAttackDuration = 20;
     protected int baseSecondaryAttackCooldown = 20;
     protected int basePrimaryAttackCooldown = 20;
+    public Matrix4f mouthMatrix = null;
+    private Vec3d mouthWorldPos = null;
+    public @Nullable Matrix4f riderMatrix = null;
 
     protected DragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -122,7 +133,7 @@ public abstract class DragonEntity extends TameableEntity {
 
     @Override
     protected EntityNavigation createNavigation(World world) {
-        return new LLGDragonsPathNavigateGround(this, world);
+        return new LumicodePathFinderNavigateGround(this, world);
     }
 
     @Override
@@ -377,6 +388,29 @@ public abstract class DragonEntity extends TameableEntity {
         return false;
     }
 
+    public boolean boosting() {
+        return MinecraftClient.getInstance().options.sprintKey.isPressed();
+    }
+
+    public boolean canBoost() {
+        return false;
+    }
+
+    public void setMouthMatrix(Matrix4f matrix) {
+        this.mouthMatrix = new Matrix4f(matrix);
+    }
+
+    public Vec3d getMouthWorldPos() {
+        if (mouthWorldPos == null) {
+            return this.getPos().add(0, this.getStandingEyeHeight(), 0);
+        }
+        return mouthWorldPos;
+    }
+
+    public void setMouthWorldPos(Vec3d pos) {
+        this.mouthWorldPos = pos;
+    }
+
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getStackInHand(hand);
@@ -420,7 +454,8 @@ public abstract class DragonEntity extends TameableEntity {
                 this.heal((float)item.getFoodComponent().getHunger());
                 return ActionResult.SUCCESS;
             } else if (this.isBreedingItem(itemstack) && !this.isBaby()) {
-                this.setBreedingAge(0);
+                //this.setBreedingAge(600);
+                this.setLoveTicks(600);
                 if (!player.getAbilities().creativeMode) {
                     itemstack.decrement(1);
                 }
@@ -512,37 +547,12 @@ public abstract class DragonEntity extends TameableEntity {
     }
 
     private void spawnItemParticles(ItemStack stack, int count) {
-        if (!this.isBaby()) {
-            for (int i = 0; i < count; ++i) {
-                Vec3d vec3d = new Vec3d(((double) this.random.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
-                vec3d = vec3d.rotateX(-this.getPitch() * 0.017453292F);
-                vec3d = vec3d.rotateY(-this.getYaw() * 0.017453292F);
-                double d = (double) (-this.random.nextFloat()) * 0.6 - 0.3;
-                Vec3d vec3d2 = new Vec3d(((double) this.random.nextFloat() - 0.5) * 0.3, d + 0.4f, 2.6);
-                vec3d2 = vec3d2.rotateX(-this.getPitch() * 0.017453292F);
-                vec3d2 = vec3d2.rotateY(-this.getYaw() * 0.017453292F);
-                vec3d2 = vec3d2.add(this.getX(), this.getEyeY(), this.getZ());
-                if (stack.isOf(Items.CAKE)) {
-                    this.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.CAKE.getDefaultState()), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
-                } else {
-                    this.getWorld().addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, stack), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
-                }
-            }
-        } else {
-            for (int i = 0; i < count; ++i) {
-                Vec3d vec3d = new Vec3d(((double) this.random.nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
-                vec3d = vec3d.rotateX(-this.getPitch() * 0.017453292F);
-                vec3d = vec3d.rotateY(-this.getYaw() * 0.017453292F);
-                double d = (double) (-this.random.nextFloat()) * 0.6 - 0.3;
-                Vec3d vec3d2 = new Vec3d(((double) this.random.nextFloat() - 0.5) * 0.3, d + 0.4f, 0.9);
-                vec3d2 = vec3d2.rotateX(-this.getPitch() * 0.017453292F);
-                vec3d2 = vec3d2.rotateY(-this.getYaw() * 0.017453292F);
-                vec3d2 = vec3d2.add(this.getX(), this.getEyeY(), this.getZ());
-                if (stack.isOf(Items.CAKE)) {
-                    this.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.CAKE.getDefaultState()), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
-                } else {
-                    this.getWorld().addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, stack), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
-                }
+        for (int i = 0; i < count; ++i) {
+            Vec3d particleOrigin = this.getMouthWorldPos();
+            if (stack.isOf(Items.CAKE)) {
+                this.getWorld().addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.CAKE.getDefaultState()), particleOrigin.x, particleOrigin.y, particleOrigin.z, particleOrigin.x, particleOrigin.y + 0.05, particleOrigin.z);
+            } else {
+                this.getWorld().addParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, stack), particleOrigin.x, particleOrigin.y, particleOrigin.z, particleOrigin.x, particleOrigin.y + 0.05, particleOrigin.z);
             }
         }
     }
@@ -579,9 +589,20 @@ public abstract class DragonEntity extends TameableEntity {
 
         if (this.getWorld().isClient && !this.isSilent() && this.flying) {
             if (this.isAlive() && this.random.nextInt(10) < this.flapSoundChance++) {
-                if (this.isGoingDown()) {
+                if (this.isGoingDown() && this.canBoost() && this.boosting()) {
+
+                } else if (this.isGoingDown() && this.canBoost() && !this.boosting()) {
                     this.resetFlapSoundDelay();
                     this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 1.0F, 0.2F + this.random.nextFloat() * 0.3F, false);
+                } else {
+                    this.resetFlapSoundDelay();
+                    this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 1.0F, 0.2F + this.random.nextFloat() * 0.3F, false);
+                }
+            }
+            if (this.isAlive() && this.random.nextInt(10) < this.diveSoundChance++) {
+                if (this.isGoingDown() && this.canBoost() && this.boosting()) {
+                    this.resetDiveSoundDelay();
+                    //this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ITEM_ELYTRA_FLYING, this.getSoundCategory(), 0.6F, 0.2F + this.random.nextFloat() * 0.3F, false);
                 }
             }
 
@@ -619,7 +640,7 @@ public abstract class DragonEntity extends TameableEntity {
 
         this.setAgeInt(dataTracker.get(AGE_INT) - 1);
 
-        if (dataTracker.get(AGE_INT) == 0) {
+        if (dataTracker.get(AGE_INT) == 0 || dataTracker.get(AGE_INT) <= -24000) {
             setDayCountAge(this.dataTracker.get(DAY_COUNT_AGE) + 1);
             this.setAgeInt(base_day_length);
         }
@@ -634,6 +655,9 @@ public abstract class DragonEntity extends TameableEntity {
     }
 
     public int getMinFlapSoundDelay() {
+        if (this.canBoost() && this.boosting()) {
+            return 10;
+        }
         return 30;
     }
 
@@ -671,7 +695,8 @@ public abstract class DragonEntity extends TameableEntity {
     public void travel(Vec3d vec3) {
         if (this.isInAir()) {
             if (this.isLogicalSideForUpdatingMovement()) {
-                this.updateVelocity(this.getMovementSpeed(), vec3);
+                float boost = this.canBoost() && this.boosting() ? 2 : 1;
+                this.updateVelocity(this.getMovementSpeed() * boost, vec3);
                 this.move(MovementType.SELF, this.getVelocity());
                 this.setVelocity(this.getVelocity().multiply(0.0f));
             }
@@ -691,7 +716,11 @@ public abstract class DragonEntity extends TameableEntity {
             if (MinecraftClient.getInstance().options.jumpKey.isPressed()) {
                 moveY = 1;
             } else if (LLGDragonsClient.descend.isPressed()) {
-                moveY = -1;
+                if (this.canBoost() && this.boosting()) {
+                    moveY = -2;
+                } else {
+                    moveY = -1;
+                }
             }
         }
 
@@ -765,7 +794,7 @@ public abstract class DragonEntity extends TameableEntity {
     }
 
     public boolean isFlying() {
-        return this.dataTracker.get(FLYING);
+        return !this.isOnGround() && !this.isTouchingWater();
     }
 
     public boolean isStill() {
@@ -814,6 +843,12 @@ public abstract class DragonEntity extends TameableEntity {
         this.chooseFavouriteFood();
         this.dataTracker.set(FAVOURITE_FOOD, favouriteFood);
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+    }
+
+    @Override
+    public void onSpawnPacket(EntitySpawnS2CPacket packet) {
+        this.setAgeInt(base_day_length);
+        super.onSpawnPacket(packet);
     }
 
     public boolean isBreedingItem(ItemStack stack) {
@@ -1034,4 +1069,91 @@ public abstract class DragonEntity extends TameableEntity {
             this.dragonEntity.setStill(false);
         }
     }
+
+    public static class DragonSleepGoal extends Goal {
+        private final DragonEntity dragonEntity;
+
+        public DragonSleepGoal(DragonEntity dragonEntity) {
+            this.dragonEntity = dragonEntity;
+            this.setControls(EnumSet.of(Goal.Control.JUMP, Goal.Control.MOVE));
+        }
+
+        @Override
+        public boolean shouldContinue() {
+            return this.dragonEntity.isDragonSleeping();
+        }
+
+        @Override
+        public boolean canStart() {
+            if (!this.dragonEntity.isTamed()) {
+                return false;
+            } else if (this.dragonEntity.isInsideWaterOrBubbleColumn()) {
+                return false;
+            } else if (!this.dragonEntity.isOnGround()) {
+                return false;
+            } else {
+                if (this.dragonEntity.getOwner() == null) {
+                    // Has to be true cause if Owner is not there
+                    // Only if owner is there, dragon can get set to walk
+                    return true;
+                } else {
+                    return this.dragonEntity.isDragonSleeping();
+                }
+            }
+        }
+
+        @Override
+        public void start() {
+            this.dragonEntity.getNavigation().stop();
+            this.dragonEntity.setIsDragonSleeping(true);
+        }
+
+        @Override
+        public void stop() {
+            this.dragonEntity.setIsDragonSleeping(false);
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public boolean isClientBoosting() {
+        return this.boosting();
+    }
+
+    /*public Vec3d getRiderOffset(Entity entity, float partialTick) {
+        float x = this.getPassengersRidingXOffset();
+        float y = (float)((this.isRemoved() ? (double)0.01F : this.getPassengersRidingOffset()) + getVehicleAttachmentPoint(entity).y);
+        if (this.getPassengerList().size() > 1) {
+            int i = this.getPassengerList().indexOf(entity);
+            if (i == 0) {
+                x = 0.2F;
+            } else {
+                x = -0.6F;
+            }
+
+            if (entity instanceof AnimalEntity) {
+                x += 0.2F;
+            }
+        }
+
+        Vec3d vec3 = new Vec3d((double)x, (double)y, (double)0.0F);
+        vec3 = vec3.rotateY(-this.getYaw(partialTick) * ((float)Math.PI / 180F) - ((float)Math.PI / 2F));
+        return new Vec3d(vec3.x, vec3.y, vec3.z);
+    }
+
+    public Vec3d getVehicleAttachmentPoint(Entity vehicle) {
+        if (vehicle instanceof LivingEntity living) {
+            return new Vec3d(0.0, living.getHeight() * 0.75, 0.0);
+        }
+        return Vec3d.ZERO;
+    }
+
+    public abstract float getPassengersRidingXOffset();
+
+    public abstract float getYRideOffset();
+
+    public abstract float getLayerYOffset();
+
+    public double getPassengersRidingOffset() {
+        return (double)this.getDimensions(EntityPose.STANDING).height * (double)this.getYRideOffset();
+    }*/
 }

@@ -3,14 +3,15 @@
 	"id": "llgdragons",
 	"version": "${version}",
 	"name": "LLG Dragons: Re-Fabricated",
-	"description": "How to train your Dragon",
+	"description": "A re-creation of the old LLGDragons mod created by \"Little Lizard Gaming\" and \"Tiny Turtle\" for their original HTTYD series in 1.10.2.",
 	"authors": [
-		"Wyrmbera"
+		"VoidPetal"
 	],
 	"contributors": [
-		"PrangellPlays",
-		"TinyTurtle",
-		"LittleLizard"
+		"PrangellPlays - Developer",
+		"TinyTurtle - Original Creator",
+		"LittleLizard - Original Creator",
+		"Alylica - Animation help"
 	],
 	"contact": {
 		"homepage": "https://github.com/PrangellPlays/LLGDragons_ReFabricated/wiki",
@@ -32,14 +33,17 @@
 		],
 		"modmenu": [
 			"dev.prangellplays.llgdragons.config.ModMenuCompat"
-		]
-	},
+		],
+        "preLaunch": [
+            "dev.prangellplays.llgdragons.LLGDragonsPreLaunch"
+        ]
+    },
 	"mixins": [
 		"llgdragons.mixins.json"
 	],
 	"accessWidener": "llgdragons.accesswidener",
 	"depends": {
-		"fabricloader": ">=0.16.10",
+		"fabricloader": ">=0.16.14",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*",

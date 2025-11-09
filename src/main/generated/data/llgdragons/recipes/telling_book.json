@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:book"
+    },
+    {
+      "item": "minecraft:name_tag"
+    },
+    {
+      "item": "llgdragons:scroll"
+    }
+  ],
+  "result": {
+    "item": "llgdragons:telling_book"
+  }
+}

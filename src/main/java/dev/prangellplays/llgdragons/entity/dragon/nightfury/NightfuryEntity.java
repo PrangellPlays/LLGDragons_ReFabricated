@@ -1,8 +1,7 @@
 package dev.prangellplays.llgdragons.entity.dragon.nightfury;
 
 import dev.prangellplays.llgdragons.LLGDragons;
-import dev.prangellplays.llgdragons.LLGDragonsClient;
-import dev.prangellplays.llgdragons.data.nightfury.NightfuryVariant;
+import dev.prangellplays.llgdragons.data.nightfury.variant.NightfuryVariant;
 import dev.prangellplays.llgdragons.entity.DragonEntity;
 import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.NightfuryEggEntity;
 import dev.prangellplays.llgdragons.entity.dragonability.nightfury.PlasmaBlastEntity;
@@ -10,8 +9,6 @@ import dev.prangellplays.llgdragons.init.LLGDragonsEntities;
 import dev.prangellplays.llgdragons.init.LLGDragonsItems;
 import dev.prangellplays.llgdragons.init.LLGDragonsSounds;
 import dev.prangellplays.llgdragons.util.LLGDragonsTags;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -25,18 +22,14 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -48,7 +41,8 @@ import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_FLYING_SPEED;
 import static net.minecraft.entity.attribute.EntityAttributes.GENERIC_MOVEMENT_SPEED;
@@ -57,6 +51,7 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
     private static final TrackedData<Integer> VARIANT_ID = DataTracker.registerData(NightfuryEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private final Map<String, Vec3d> clientLocatorCache = new ConcurrentHashMap<>();
 
     public NightfuryEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -96,16 +91,13 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
     protected void initGoals() {
         this.goalSelector.add(0, new SwimGoal(this));
         this.goalSelector.add(1, new DragonStillGoal(this));
+        this.goalSelector.add(1, new DragonSleepGoal(this));
         this.goalSelector.add(2, new DragonSitGoal(this));
         this.goalSelector.add(3, new NightFuryMateGoal(this, 1.0D));
         this.goalSelector.add(4, new TemptGoal(this, 0.75f, TAMING_INGREDIENT, false));
         this.goalSelector.add(5, new DragonFetchGoal(this));
         this.goalSelector.add(6, new WanderAroundFarGoal(this, 0.75f, 0.2f));
         this.goalSelector.add(7, new LookAroundGoal(this));
-    }
-
-    public boolean boosting() {
-        return MinecraftClient.getInstance().options.sprintKey.isPressed();
     }
 
     @Nullable
@@ -129,6 +121,11 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
     }
 
     @Override
+    public boolean canBoost() {
+        return true;
+    }
+
+    @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
@@ -136,7 +133,7 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
     private PlayState predicate(AnimationState<NightfuryEntity> dragonEntityAnimationState) {
         if (!this.isBaby()) {
             if (this.flying) {
-                if (this.boosting()) {
+                if (this.canBoost() && this.boosting()) {
                     if (this.isGoingUp() && this.isInAir()) {
                         dragonEntityAnimationState.getController().setAnimation(RawAnimation.begin().then("animation.nightfury.flyingupboost", Animation.LoopType.LOOP));
                     } else if (this.isGoingDown() && this.isInAir()) {
@@ -186,29 +183,6 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
     @Override
     public void tick() {
         super.tick();
-        if (this.getWorld().isClient && !this.isSilent() && this.flying) {
-            if (this.isAlive() && this.random.nextInt(10) < this.flapSoundChance++) {
-                if (this.isGoingDown() && this.boosting()) {
-
-                } else if (this.isGoingDown() && !this.boosting()) {
-                    this.resetFlapSoundDelay();
-                    this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 1.0F, 0.2F + this.random.nextFloat() * 0.3F, false);
-                } else {
-                    this.resetFlapSoundDelay();
-                    this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_ENDER_DRAGON_FLAP, this.getSoundCategory(), 1.0F, 0.2F + this.random.nextFloat() * 0.3F, false);
-                }
-            }
-            if (this.isAlive() && this.random.nextInt(10) < this.diveSoundChance++) {
-                if (this.isGoingDown() && this.boosting()) {
-                    this.resetDiveSoundDelay();
-                    this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ITEM_ELYTRA_FLYING, this.getSoundCategory(), 0.6F, 0.2F + this.random.nextFloat() * 0.3F, false);
-                }
-            }
-
-            if (!isFlying() || this.isNearGround() || !this.isGoingDown() && this.random.nextInt(10) > this.diveSoundChance++) {
-                MinecraftClient.getInstance().getSoundManager().stopSounds(SoundEvents.ITEM_ELYTRA_FLYING.getId(), this.getSoundCategory());
-            }
-        }
 
         if (hasControllingPassenger()) {
             if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) {
@@ -217,6 +191,8 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
                 this.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 15, 4, false, false, false), this);
             }
         }
+
+        if (!this.getWorld().isClient) return;
     }
 
     public void shoot() {
@@ -238,14 +214,6 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
         }
     }
 
-    @Override
-    public int getMinFlapSoundDelay() {
-        if (this.boosting()) {
-            return 10;
-        }
-        return 30;
-    }
-
     protected SoundEvent getAmbientSound() {
         return LLGDragonsSounds.NIGHTFURY_ROAR;
     }
@@ -254,62 +222,18 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
         return LLGDragonsSounds.NIGHTFURY_ROAR;
     }
 
-    @Override
-    public void travel(Vec3d vec3) {
-        if (this.isInAir()) {
-            if (this.isLogicalSideForUpdatingMovement()) {
-                float boost = this.boosting() ? 2 : 1;
-                this.updateVelocity(this.getMovementSpeed() * boost, vec3);
-                this.move(MovementType.SELF, this.getVelocity());
-                this.setVelocity(this.getVelocity().multiply(0.0f));
-            }
-            this.updateLimbs(true);
-        } else super.travel(vec3);
-    }
-
-    @Override
-    protected Vec3d getControlledMovementInput(PlayerEntity player, Vec3d move) {
-        double moveSideways = player.sidewaysSpeed;
-        double moveY = move.y;
-        double moveForward = player.forwardSpeed;
-        if (this.hasLocalDriver()) {
-            moveForward = moveForward < 0 ? moveForward / 3 : moveForward;
-        }
-        if (this.isInAir() && this.hasLocalDriver()) {
-            if (MinecraftClient.getInstance().options.jumpKey.isPressed()) {
-                moveY = 1;
-            } else if (LLGDragonsClient.descend.isPressed()) {
-                if (this.boosting()) {
-                    moveY = -2;
-                } else {
-                    moveY = -1;
-                }
-            }
-        }
-
-        float speed = this.getSaddledSpeed(player);
-        float verticalSpeed = speed - 0.6f;
-        return new Vec3d(moveSideways * speed, moveY * verticalSpeed, moveForward * speed);
-    }
-
-    public double getMountedHeightOffset() {
-        if (this.isGoingUp() && this.isFlying() && !this.isOnGround()) {
-            return super.getMountedHeightOffset() - 0.2f;
-        } else if (this.isGoingDown() && this.isFlying() && !this.isOnGround()) {
-            return super.getMountedHeightOffset() + 1.32;
-        } else {
-            return super.getMountedHeightOffset() + 0.62;
-        }
-    }
-
     public boolean canBreedWith(NightfuryEntity other) {
         if (other == this) {
             return false;
-        } else if (other.getClass() != this.getClass()) {
-            return false;
-        } else {
-            return this.isInLove() && other.isInLove();
         }
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        if (!this.isInLove() || !other.isInLove()) {
+            return false;
+        }
+
+        return this.isFemale() != other.isFemale();
     }
 
     public NightfuryEggEntity createEgg(NightfuryEntity nightfury) {
@@ -345,7 +269,7 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
 
         @Override
         public boolean canStart() {
-            if (!this.dragon.isInLove() || !this.dragon.isInSittingPose()) return false;
+            if (!this.dragon.isInLove() || this.dragon.isInSittingPose()) return false;
             else {
                 this.targetMate = this.getNearbyMate();
                 return this.targetMate != null;
@@ -388,43 +312,75 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
         }
 
         private void spawnBaby() {
-            NightfuryEggEntity egg = this.dragon.createEgg(this.targetMate);
-            if (egg != null) {
+            /*NightfuryEggCombination combination = NightfuryEggCombinations.getMatchingCombination(theWorld.getRegistryManager(), (RegistryEntry<NightfuryVariant) this.dragon.getVariant(), (RegistryEntry<NightfuryVariant>) targetMate.getVariant());
+            Registry<NightfuryVariant> variantRegistry = this.theWorld.getRegistryManager().get(LLGDragons.NIGHTFURY_VARIANT_KEY);
+            NightfuryEggCombination combo = NightfuryEggCombinations.getMatchingCombination(theWorld.getRegistryManager(),
+                    (RegistryEntry<NightfuryVariant>) this.dragon.getVariant(), (RegistryEntry<NightfuryVariant>) this.targetMate.getVariant()
+            );
+            RegistryEntry<NightfuryVariant> variantEntry;
+            Random random = this.dragon.getRandom();
 
-                this.dragon.setBreedingAge(6000);
-                this.targetMate.setBreedingAge(6000);
-                this.dragon.resetLoveTicks();
-                this.targetMate.resetLoveTicks();
-                int nestX = (int) (!this.dragon.isFemale() ? this.targetMate.getX() : this.dragon.getX());
-                int nestY = (int) (!this.dragon.isFemale() ? this.targetMate.getY() : this.dragon.getY()) - 1;
-                int nestZ = (int) (!this.dragon.isFemale() ? this.targetMate.getZ() : this.dragon.getZ());
-
-                egg.refreshPositionAndAngles(nestX - 0.5F, nestY + 1F, nestZ - 0.5F, 0.0F, 0.0F);
-                this.theWorld.spawnEntity(egg);
-                Random random = this.dragon.getRandom();
-
-                for (int i = 0; i < 17; ++i) {
-                    final double d0 = random.nextGaussian() * 0.02D;
-                    final double d1 = random.nextGaussian() * 0.02D;
-                    final double d2 = random.nextGaussian() * 0.02D;
-                    final double d3 = random.nextDouble() * this.dragon.getWidth() * 2.0D - this.dragon.getWidth();
-                    final double d4 = 0.5D + random.nextDouble() * this.dragon.getHeight();
-                    final double d5 = random.nextDouble() * this.dragon.getWidth() * 2.0D - this.dragon.getWidth();
-                    this.theWorld.addParticle(ParticleTypes.HEART, this.dragon.getX() + d3, this.dragon.getY() + d4, this.dragon.getZ() + d5, d0, d1, d2);
-                }
-                BlockPos eggPos = new BlockPos(nestX - 2, nestY, nestZ - 2);
-                BlockPos dirtPos = eggPos.add(1, 0, 1);
-
-                for (int x = 0; x < 3; x++)
-                    for (int z = 0; z < 3; z++) {
-                        BlockPos add = eggPos.add(x, 0, z);
-                        BlockState prevState = this.theWorld.getBlockState(add);
-                    }
-                if (this.theWorld.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
-                    this.theWorld.spawnEntity(new ExperienceOrbEntity(this.theWorld, this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), random.nextInt(15) + 10));
+            if (combo != null && !combo.getResultEggs().isEmpty()) {
+                Identifier id = combo.getResultEggs().get(random.nextInt(combo.getResultEggs().size()));
+                variantEntry = variantRegistry.getEntry(RegistryKey.of(LLGDragons.NIGHTFURY_VARIANT_KEY, id))
+                        .orElseThrow(() -> new IllegalStateException("Unknown variant: " + id));
+            } else {
+                variantEntry = (RegistryEntry<NightfuryVariant>) this.dragon.getVariant();
             }
+
+            int offspringCount = combination.getOffspringCount();
+
+            for (int i = 0; i < offspringCount; i++) {
+
+                NightfuryEggEntity egg = this.dragon.createEgg(this.targetMate);
+                if (egg == null) continue;
+
+                System.out.println("Breeding " + dragon.getVariant().texture + " x " + targetMate.getVariant().texture);
+                System.out.println("Chosen offspring variant: " + variantEntry);
+                egg.setVariant((NightfuryVariant) variantEntry, egg.getWorld().getRegistryManager());
+
+                if (i == 0) {
+                    this.dragon.setBreedingAge(6000);
+                    this.targetMate.setBreedingAge(6000);
+                    this.dragon.resetLoveTicks();
+                    this.targetMate.resetLoveTicks();
+                }
+
+                double offsetX = (random.nextDouble() - 0.5) * 2.0;
+                double offsetZ = (random.nextDouble() - 0.5) * 2.0;
+                double posX = (!this.dragon.isFemale() ? this.targetMate.getX() : this.dragon.getX()) + offsetX;
+                double posY = (!this.dragon.isFemale() ? this.targetMate.getY() : this.dragon.getY()) - 1;
+                double posZ = (!this.dragon.isFemale() ? this.targetMate.getZ() : this.dragon.getZ()) + offsetZ;
+
+                egg.refreshPositionAndAngles(posX, posY + 1F, posZ, 0.0F, 0.0F);
+                this.theWorld.spawnEntity(egg);
+
+                for (int p = 0; p < 17; ++p) {
+                    double d0 = random.nextGaussian() * 0.02D;
+                    double d1 = random.nextGaussian() * 0.02D;
+                    double d2 = random.nextGaussian() * 0.02D;
+                    double d3 = random.nextDouble() * egg.getWidth() * 2.0D - egg.getWidth();
+                    double d4 = 0.5D + random.nextDouble() * egg.getHeight();
+                    double d5 = random.nextDouble() * egg.getWidth() * 2.0D - egg.getWidth();
+                    this.theWorld.addParticle(ParticleTypes.HEART, egg.getX() + d3, egg.getY() + d4, egg.getZ() + d5, d0, d1, d2);
+                }
+            }
+
+            if (this.theWorld.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
+                this.theWorld.spawnEntity(new ExperienceOrbEntity(this.theWorld, this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), random.nextInt(15) + 10));
+            }*/
         }
     }
+
+    /*public double getMountedHeightOffset() {
+        if (this.isGoingUp() && this.isFlying() && !this.isOnGround()) {
+            return super.getMountedHeightOffset() - 0.2f;
+        } else if (this.isGoingDown() && this.isFlying() && !this.isOnGround()) {
+            return super.getMountedHeightOffset() + 1.32;
+        } else {
+            return super.getMountedHeightOffset() + 0.62;
+        }
+    }*/
 
     public static class DragonFetchGoal extends Goal {
         private final DragonEntity dragonEntity;
@@ -596,5 +552,15 @@ public class NightfuryEntity extends DragonEntity implements VariantHolder<Night
             this.failed = true;
             this.dragonEntity.getWorld().playSound(null, this.dragonEntity.getX(), this.dragonEntity.getY(), this.dragonEntity.getZ(), LLGDragonsSounds.NIGHTFURY_ROAR, SoundCategory.NEUTRAL, 0.4f, 1.05f);
         }
+    }
+
+    public void setClientLocatorPosition(String name, Vec3d pos) {
+        if (name == null || pos == null) return;
+        this.clientLocatorCache.put(name, pos);
+    }
+
+    public Vec3d getClientLocatorPosition(String name) {
+        if (name == null) return null;
+        return this.clientLocatorCache.get(name);
     }
 }

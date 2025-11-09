@@ -1,6 +1,6 @@
 package dev.prangellplays.llgdragons.data;
 
-import dev.prangellplays.llgdragons.data.nightfury.NightfuryVariant;
+import dev.prangellplays.llgdragons.data.nightfury.variant.NightfuryVariant;
 import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;

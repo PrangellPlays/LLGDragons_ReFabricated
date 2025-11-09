@@ -15,6 +15,7 @@ import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -94,7 +95,9 @@ public class PlasmaBlastEntity extends ExplosiveProjectileEntity implements GeoE
         if (!this.getWorld().isClient() && entity != null && hittedEntity instanceof LivingEntity) {
             hittedEntity.damage(plamsmaBlastDamageSource(this), 3.0F);
             this.getWorld().createExplosion(this, this.getX(), this.getY(), this.getZ(), 5, World.ExplosionSourceType.MOB);
-            this.getWorld().addImportantParticle(LLGDragonsParticles.PLASMA_WAVE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
+            if (!this.getWorld().isClient()) {
+                ((ServerWorld) this.getWorld()).spawnParticles(LLGDragonsParticles.PLASMA_WAVE, this.getX(), this.getY(), this.getZ(), 1, 0, 0, 0, 0);
+            }
             this.discard();
         }
     }
@@ -105,7 +108,9 @@ public class PlasmaBlastEntity extends ExplosiveProjectileEntity implements GeoE
             Entity entity = this.getOwner();
             if (entity == null || !(entity instanceof MobEntity) || this.getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
                 createPlasmaExplosion(this, this.getX(), this.getY(), this.getZ(), 5, World.ExplosionSourceType.MOB);
-                //this.getWorld().addImportantParticle(LLGDragonsParticles.PLASMA_WAVE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
+                if (!this.getWorld().isClient()) {
+                    ((ServerWorld) this.getWorld()).spawnParticles(LLGDragonsParticles.PLASMA_WAVE, this.getX(), this.getY(), this.getZ(), 1, 0, 0, 0, 0);
+                }
             }
             this.discard();
         }

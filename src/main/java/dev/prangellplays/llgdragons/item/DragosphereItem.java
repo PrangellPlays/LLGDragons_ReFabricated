@@ -185,7 +185,7 @@ public class DragosphereItem  extends Item {
             } else {
                 tooltip.add(Text.translatable("item.llgdragons.dragosphere.age").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.literal(String.valueOf(nbt.getCompound("CapturedDragon").getInt("day_count_age"))).append(Text.literal(" ")).append(Text.translatable("item.llgdragons.dragosphere.days").append(Text.literal(" (").append(Text.translatable("item.llgdragons.telling_book.age.adult").append(Text.literal(")"))))).formatted(Formatting.GREEN))));
             }
-            tooltip.add(Text.translatable("item.llgdragons.dragosphere.favourite_food").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.translatable(String.valueOf(nbt.getCompound("CapturedDragon").getString("favourite_food"))).formatted(Formatting.GREEN))));
+            tooltip.add(Text.translatable("item.llgdragons.dragosphere.favourite_food").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY).append(Text.translatable(String.valueOf(nbt.getCompound("CapturedDragon").getString("favourite_food").toString())).formatted(Formatting.GREEN))));
             //tooltip.add(Text.translatable("item.llgdragons.dragosphere.captured").formatted(Formatting.GRAY).append(Text.literal(": ").formatted(Formatting.GRAY)).append(Text.literal(entityTypeString).formatted(Formatting.GREEN)));
         } else {
             tooltip.add(Text.translatable("item.llgdragons.dragosphere.no_dragon").formatted(Formatting.DARK_RED));

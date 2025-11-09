@@ -550,4 +550,19 @@ public class AztecNightfuryEntity extends DragonEntity implements GeoEntity {
             this.dragonEntity.getWorld().playSound(null, this.dragonEntity.getX(), this.dragonEntity.getY(), this.dragonEntity.getZ(), LLGDragonsSounds.NIGHTFURY_ROAR, SoundCategory.NEUTRAL, 0.4f, 1.05f);
         }
     }
+
+    /*@Override
+    public float getPassengersRidingXOffset() {
+        return 0.0F;
+    }
+
+    @Override
+    public float getYRideOffset() {
+        return 0.3F;
+    }
+
+    @Override
+    public float getLayerYOffset() {
+        return 2.0F;
+    }*/
 }

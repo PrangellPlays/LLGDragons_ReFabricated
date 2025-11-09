@@ -6,6 +6,9 @@ import dev.prangellplays.llgdragons.client.entity.nightfury.renderer.aztec.Aztec
 import dev.prangellplays.llgdragons.client.entity.nightfury.renderer.aztec.AztecNightfuryRenderer;
 import dev.prangellplays.llgdragons.client.entity.nightfury.renderer.plasma_blast.PlasmaBlastRenderer;
 import dev.prangellplays.llgdragons.client.init.LLGDragonsEntityRenderer;
+import dev.prangellplays.llgdragons.client.sound.DragonDiveSoundInstance;
+import dev.prangellplays.llgdragons.client.sound.DragonSoundHandler;
+import dev.prangellplays.llgdragons.entity.DragonEntity;
 import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.AztecNightfuryEggEntity;
 import dev.prangellplays.llgdragons.entity.dragon.nightfury.AztecNightfuryEntity;
 import dev.prangellplays.llgdragons.entity.dragon.nightfury.Egg.NightfuryEggEntity;
@@ -18,13 +21,22 @@ import dev.prangellplays.llgdragons.network.KeyInputSyncPacket;
 import dev.prangellplays.llgdragons.network.LLGDragonsServerPacket;
 import dev.prangellplays.llgdragons.particle.PlasmaWaveParticle;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.Entity;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class LLGDragonsRegistries {
+    private static final Set<UUID> currentlyPlaying = new HashSet<>();
+
     public static void init() {
         LLGDragonsBlocks.init();
         LLGDragonsItems.init();
@@ -45,6 +57,7 @@ public class LLGDragonsRegistries {
         registerEntityRenderer();
         registerParticleFactory();
         registerModelPredicates();
+        registerClientEvents();
     }
 
     private static void registerEntityAttributes() {
@@ -78,6 +91,26 @@ public class LLGDragonsRegistries {
     private static void registerModelPredicates() {
         ModelPredicateProviderRegistry.register(LLGDragonsItems.DRAGOSPHERE, LLGDragons.id("dragosphere_full"), (stack, world, entity, i) -> {
             return DragosphereItem.hasCapturedDragon(stack) ? 1.0F : 0.0F;
+        });
+    }
+
+    private static void registerClientEvents() {
+        ClientTickEvents.END_CLIENT_TICK.register(DragonSoundHandler::onClientTick);
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.world == null || client.player == null) return;
+
+            for (Entity entity : client.world.getEntities()) {
+                if (entity instanceof DragonEntity dragon) {
+                    if (dragon.isClientBoosting() && dragon.isGoingDown()) {
+                        if (!currentlyPlaying.contains(dragon.getUuid())) {
+                            MinecraftClient.getInstance().getSoundManager().play(new DragonDiveSoundInstance(dragon));
+                            currentlyPlaying.add(dragon.getUuid());
+                        }
+                    } else {
+                        currentlyPlaying.remove(dragon.getUuid());
+                    }
+                }
+            }
         });
     }
 }

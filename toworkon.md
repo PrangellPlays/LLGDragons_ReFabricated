@@ -1,0 +1,13 @@
+# To Work On
+- Update the mod to Fabric 1.21.1 (Allows the use of Veil and it's lighting system while also supporting sodium and iris (Partially).)
+- Rendering the player on the model at a certain position (Allows for the model rotations to dictate how the player is rendered whilst riding.)
+- Data driven breeding system (Frost and Ekon always produce Stardust and Darklight.)
+- Rework Nightfury model (Supporting the easy creation of Stardust, Darklight, and Ekon's textures.)
+- Reworked flight system (Using pitched angles to move upwards and downwards, similar to how dragonfire works. Making the dragons just move indefinitely while riding them. Client Config for simplified (closer to the original mod) or more advanced.)
+- Dragon flight formations (Allow if the player has an elytra and the tamed dragon is wandering for it to fly by the players side.)
+- Wandering system (For a tamed dragon, they will wander around on foot, however if wild, then it can fly around on its own accord.)
+- Nest spawning (Naturally, dragons will spawn at their nests along with an egg or a few.)
+- Natural spawning (Some dragons might naturally spawn.)
+- Structures (Dragon cage where Toothless was found in TT series, orc entrapments and such for bewilderbeasts.)
+- Bewilderbeast Dimension (As seen in LL and TT videos.)
+- Rework attack system (Add melee attacks along with the ranged attack while also making the mod use veil for lights around the attack.)
